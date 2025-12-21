@@ -1,0 +1,32 @@
+# Godot 4+ specific ignores
+.godot/
+.nomedia
+/android/
+
+# Godot-specific ignores
+.import/
+export.cfg
+export_credentials.cfg
+
+# C sharp:
+nupkg/
+bin/
+obj/
+.generated/
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash.*.json
+
+# VSCode:
+.vs/
+
+# Mac OS:
+.DS_Store
+
+# Blender:
+*.blend1
