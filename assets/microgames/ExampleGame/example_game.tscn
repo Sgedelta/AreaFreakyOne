@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://buo8nab4rmgnq"]
+
+[ext_resource type="Script" uid="uid://c6dynlg7jx7s8" path="res://assets/microgames/ExampleGame/ExampleGame.cs" id="1_qg4fw"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_qg4fw"]
+size = Vector2(100, 100)
+
+[node name="ExampleGame" type="Node2D"]
+script = ExtResource("1_qg4fw")
+speed = 200.0
+sprintFactor = 3.3
+_id = "example_game"
+
+[node name="Player" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(1814, 974)
+texture = SubResource("PlaceholderTexture2D_qg4fw")
