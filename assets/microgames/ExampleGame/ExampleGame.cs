@@ -142,6 +142,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 		// so we can treat them as buttons. 
 		if(@event is InputEventMouseMotion)
 		{
+			//could do any number of things here, but rn we are just going to "track velocities". simple-nothings for an example
 			float movementVel = (@event as InputEventMouseMotion).Velocity.Length();
 			if (movementVel > _shakeThreshold) {
 				_recordedShakeVels += movementVel - _shakeThreshold;
