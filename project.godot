@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="AreaFreakyOne"
-run/main_scene="uid://dam081bip3hwt"
+run/main_scene="uid://c78dkit7hhh45"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://assets/GameManager.cs"
+GameManager="*res://assets/game_manager.tscn"
 
 [display]
 

@@ -1,6 +1,28 @@
-[gd_scene load_steps=2 format=3 uid="uid://dam081bip3hwt"]
+[gd_scene load_steps=6 format=3 uid="uid://dam081bip3hwt"]
 
 [ext_resource type="Script" uid="uid://cnoyukngw3l7r" path="res://assets/GameManager.cs" id="1_iirjy"]
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="2_uv11x"]
+[ext_resource type="Resource" uid="uid://dd5l506p4hykp" path="res://assets/resources/ExampleGameInfo.tres" id="3_uikel"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uv11x"]
+size = Vector2(1920, 2160)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uikel"]
+size = Vector2(1920, 2160)
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_iirjy")
+_debugMessages = true
+_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel")])
+
+[node name="DoorL" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 55
+position = Vector2(-960, 1080)
+texture = SubResource("PlaceholderTexture2D_uv11x")
+
+[node name="DoorR" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 55
+position = Vector2(4800, 1080)
+texture = SubResource("PlaceholderTexture2D_uikel")

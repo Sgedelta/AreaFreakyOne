@@ -10,8 +10,6 @@ script = ExtResource("1_qg4fw")
 _speed = 150.0
 _shakeThreshold = 7500.0
 _gameTime = 5.0
-_debug = true
-_id = "example_game"
 
 [node name="Player" type="Sprite2D" parent="."]
 unique_name_in_owner = true

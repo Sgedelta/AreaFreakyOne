@@ -26,23 +26,24 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	private Vector2 _dir = Vector2.Zero;
 	private Sprite2D _player;
 
-	//Constructor, can be used as an equivalent of Unity's Awake, but things like Singleton should be handled with Godot's Global system
-	//can be used to ensure that inspector vars are actually set - see MicroBase constructor as an example
+	//Constructor, can be used as an equivalent of Unity's Awake, but things like Singleton should be handled with Godot's Global system.
+	// risky to use, generally - use Ready
 	public ExampleGame()
 	{
-		GetNode<GameManager>("root/GameManager").StartGame += Start;
-        GetNode<GameManager>("root/GameManager").InitializeGame += Init;
-		//game manager will subscribe itself to progress report and end
 
     }
 
     // Called when the node enters the scene tree for the first time. - Equivalent of Unity's Start
     public override void _Ready()
 	{
-		_player = GetNode<Sprite2D>("%Player"); //uses godot's Unqiue Name syntax (%)
+		_gm = GetTree().Root.GetNode<GameManager>("GameManager");
+        _gm.StartGame += Start;
+        _gm.InitializeGame += Init;
+
+        _player = GetNode<Sprite2D>("%Player"); //uses godot's Unqiue Name syntax (%)
 
 
-		if(DEBUG)
+		if(DEBUG_AUTOSTART)
 		{
 			Init(0);
 			Start();
@@ -69,8 +70,6 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			_gameWon = MicroState.WON;
 			_player.Modulate = Color.Color8(255, 0, 0, 255);
 		}
-
-		GD.Print(_recordedShakeVels);
 
 		//make sure to report progress
 		CalculateProgress();
@@ -159,8 +158,9 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 
 	protected override void Init(int difficulty)
 	{
-		//grab data from array
-		int minLevel = (int)_shakeTargets[0];
+
+        //grab data from array
+        int minLevel = (int)_shakeTargets[0];
 		int maxLevel = (int)_shakeTargets[2];
 		float minShakeAmt = (float)_shakeTargets[1];
 		float maxShakeAmt = (float)_shakeTargets[3];
@@ -178,8 +178,11 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 		_gameTimer.WaitTime = _gameTime;
 		_gameTimer.OneShot = true;
 
+		GD.Print(_gameTimer);
+
 		_gameTimer.Timeout += () => 
 		{
+			
 			if(_gameWon != MicroState.WON)
 			{
 				_gameWon = MicroState.LOST;

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Security.Cryptography;
 
 public enum MicroState
 {
@@ -20,19 +21,16 @@ public partial class MicroBase : Node2D
 
     //======VARS======
 
-    [Export] private bool _debug = false;
-    public bool DEBUG { get { return _debug; } }
+    //private variables begin with _
+    [Export] private bool _debugMessages = false;
+    public bool DEBUG_MESSAGES { get { return _debugMessages; } }
 
-    //unique ID of the microgame, for indexing
-    [Export] protected string _id; //private variables begin with _
-    /// <summary>
-    /// The unique ID of the microgame, primarily used for dicitonary indexing
-    /// </summary>
-    public string ID { get { return _id; } }
+    [Export] public bool DEBUG_AUTOSTART = false;
 
     protected bool _gameStarted = false;
     protected MicroState _gameWon = MicroState.WAITING;
 
+    protected GameManager _gm; //make sure to set this on ready for ease of use
 
     //======SIGNALS======
 
@@ -45,11 +43,7 @@ public partial class MicroBase : Node2D
     //ensures that vars have been set in inspector
     public MicroBase()
     {
-        if (string.IsNullOrEmpty(_id))
-        {
-            GD.PrintErr($"Game ID of {Name} is not set correctly");
-            //this will not prevent further execution, but it will warn. Throw an exception if we want it to really stop
-        }
+        
     }
 
     //======OVERLOAD METHODS======
@@ -61,7 +55,7 @@ public partial class MicroBase : Node2D
     /// </summary>
     protected virtual void Init(int difficulty)
     {
-        GD.PushError($"Game {_id} has not overridden Init!");
+        GD.PushError($"Game {Name} has not overridden Init!");
     }
 
     /// <summary>
@@ -69,7 +63,7 @@ public partial class MicroBase : Node2D
     /// </summary>
     protected virtual void Start()
     {
-        GD.PushError($"Game {_id} has not overridden Start!");
+        GD.PushError($"Game {Name} has not overridden Start!");
     }
 
     /// <summary>
@@ -77,7 +71,7 @@ public partial class MicroBase : Node2D
     /// </summary>
     protected virtual void CalculateProgress()
     {
-        GD.PushError($"Game {_id} has not overridden Calculate Progress!");
+        GD.PushError($"Game {Name} has not overridden Calculate Progress!");
     }
 
 
