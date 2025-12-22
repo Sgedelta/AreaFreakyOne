@@ -1,6 +1,15 @@
 using Godot;
 using System;
 
+public enum MicroState
+{
+    WAITING,
+    ONGOING,
+    WON,
+    LOST
+}
+
+
 public partial class MicroBase : Node2D
 {
     //Authors: Sam Easton
@@ -11,18 +20,24 @@ public partial class MicroBase : Node2D
 
     //======VARS======
 
+    [Export] private bool _debug = false;
+    public bool DEBUG { get { return _debug; } }
+
     //unique ID of the microgame, for indexing
-    [Export] private string _id; //private variables begin with _
+    [Export] protected string _id; //private variables begin with _
     /// <summary>
     /// The unique ID of the microgame, primarily used for dicitonary indexing
     /// </summary>
     public string ID { get { return _id; } }
 
+    protected bool _gameStarted = false;
+    protected MicroState _gameWon = MicroState.WAITING;
+
 
     //======SIGNALS======
 
     [Signal] public delegate void GameProgressReportEventHandler(float progress_ratio);
-    [Signal] public delegate void GameEndEventHandler(bool won);
+    [Signal] public delegate void GameEndEventHandler(int won); //this is actually a MicroState, but needs to be a Variant type - just cast it back on recieved
 
 
     //======CONSTRUCTORS AND GODOT METHODS======
@@ -76,9 +91,9 @@ public partial class MicroBase : Node2D
     /// <summary>
     /// A method that ends the game, signaling to the Game Manager to load the next game
     /// </summary>
-    protected virtual void End(bool won)
+    protected virtual void End()
     {
-        EmitSignal(SignalName.GameEnd, won);   
+        EmitSignal(SignalName.GameEnd, (int)_gameWon);   
     }
 
     //Note: done as a method in case we need to add more logic later
