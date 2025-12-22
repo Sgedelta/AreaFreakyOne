@@ -41,15 +41,7 @@ public partial class GameManager : Node2D
 
     }
 
-    public void InitializeGame()
-    {
-
-    }
-
-    public void StartGame()
-    {
-
-    }
+   
 
 
 }
