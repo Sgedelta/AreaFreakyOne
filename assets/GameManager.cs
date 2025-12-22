@@ -18,7 +18,7 @@ public partial class GameManager : Node2D
     /// Sent when the Microgame scene has fully loaded, to make sure that all data is initialized correctly
     /// </summary>
     [Signal] 
-    public delegate void InitializeGameEventHandler();
+    public delegate void InitializeGameEventHandler(int difficulty);
 
 
     // Called when the node enters the scene tree for the first time.
@@ -31,7 +31,25 @@ public partial class GameManager : Node2D
     {
     }
 
+    public void OnGameEnd()
+    {
 
+    }
+
+    public void BeginNewGame()
+    {
+
+    }
+
+    public void InitializeGame()
+    {
+
+    }
+
+    public void StartGame()
+    {
+
+    }
 
 
 }

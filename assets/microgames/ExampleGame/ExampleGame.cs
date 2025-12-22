@@ -30,7 +30,10 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	//can be used to ensure that inspector vars are actually set - see MicroBase constructor as an example
 	public ExampleGame()
 	{
-        //nothing here, this is just as an example
+		GetNode<GameManager>("root/GameManager").StartGame += Start;
+        GetNode<GameManager>("root/GameManager").InitializeGame += Init;
+		//game manager will subscribe itself to progress report and end
+
     }
 
     // Called when the node enters the scene tree for the first time. - Equivalent of Unity's Start
