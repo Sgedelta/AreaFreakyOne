@@ -24,6 +24,8 @@ mono_crash.*.json
 
 #VS
 *.csproj
+*.csproj.user
+Properties/
 
 # VSCode:
 .vs/
