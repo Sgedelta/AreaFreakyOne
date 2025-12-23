@@ -86,7 +86,7 @@ public partial class GameManager : Node2D
         }
 
         
-        BeginNewGame(); //TEMPORARY
+        
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -112,6 +112,7 @@ public partial class GameManager : Node2D
         GameTransition.TweenCallback(Callable.From(() =>
         {
             loadedGame?.QueueFree();
+            loadedGame = null;
         }));
 
         //do whatever we need to do to transfer games

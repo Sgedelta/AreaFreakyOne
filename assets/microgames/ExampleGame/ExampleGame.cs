@@ -13,7 +13,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	[Export] private Godot.Collections.Array _shakeTargets = [0, 10000.0f, 5, 25000.0f ];
 	[Export] private float _shakeThreshold = 30.0f;
 
-    private float _shakeTarget = 10.0f;
+	private float _shakeTarget = 10.0f;
 	private float _recordedShakeVels = 0.0f;
 
 	private Timer _gameTimer;
@@ -31,16 +31,17 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	public ExampleGame()
 	{
 
-    }
+	}
 
-    // Called when the node enters the scene tree for the first time. - Equivalent of Unity's Start
-    public override void _Ready()
+	// Called when the node enters the scene tree for the first time. - Equivalent of Unity's Start
+	public override void _Ready()
 	{
 		_gm = GetTree().Root.GetNode<GameManager>("GameManager");
-        _gm.StartGame += Start;
-        _gm.InitializeGame += Init;
+		//make SURE to unsubscribe before calling end!
+		_gm.StartGame += Start;
+		_gm.InitializeGame += Init;
 
-        _player = GetNode<Sprite2D>("%Player"); //uses godot's Unqiue Name syntax (%)
+		_player = GetNode<Sprite2D>("%Player"); //uses godot's Unqiue Name syntax (%)
 
 
 		if(DEBUG_AUTOSTART)
@@ -53,13 +54,13 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	// Called every frame. 'delta' is the elapsed time since the previous frame. - Equivalent of Unity's Update
 	public override void _Process(double delta)
 	{
-        //don't do anything until the game starts
-        if (!_gameStarted)
-        {
-            return;
-        }
+		//don't do anything until the game starts
+		if (!_gameStarted)
+		{
+			return;
+		}
 
-        float dt = (float)delta; //casting to float for ease of use with vectors and such
+		float dt = (float)delta; //casting to float for ease of use with vectors and such
 
 		//move the player every frame based on dir
 		_player.Position += _dir * _speed * dt * ( _isSprinting ? _sprintFactor : 1);
@@ -78,19 +79,19 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	// Called when input is recieved
 	public override void _Input(InputEvent @event)
 	{
-        //don't do anything until the game starts
-        if (!_gameStarted)
-        {
-            return;
-        }
+		//don't do anything until the game starts
+		if (!_gameStarted)
+		{
+			return;
+		}
 
-        /*
+		/*
 		 * Something like this *could* work
 		if(@event.IsAction("Up"))
 		{
-        
 		
-            if (@event.IsPressed())
+		
+			if (@event.IsPressed())
 			{
 				GD.Print("Up Pressed!");
 			}
@@ -104,25 +105,25 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 		 * to not use echo events. try timers instead?
 		*/
 
-        //process button input like this
-        if (@event is InputEventJoypadMotion)
+		//process button input like this
+		if (@event is InputEventJoypadMotion)
 		{
-            GD.Print("Up: " + @event.GetActionStrength("Up"));
-            GD.Print("Down: " + @event.GetActionStrength("Down"));
-            GD.Print("Left: " + @event.GetActionStrength("Left"));
-            GD.Print("Right: " + @event.GetActionStrength("Right"));
-        }
-        
+			GD.Print("Up: " + @event.GetActionStrength("Up"));
+			GD.Print("Down: " + @event.GetActionStrength("Down"));
+			GD.Print("Left: " + @event.GetActionStrength("Left"));
+			GD.Print("Right: " + @event.GetActionStrength("Right"));
+		}
+		
 		// how you would process something that is bound to a joystick or trigger - anything with analog input. also works for WASD (mostly, as long as we normalize later)
-        if (@event.IsActionPressed("Up") || @event.IsActionReleased("Up") || @event.IsActionPressed("Down") || @event.IsActionReleased("Down"))
+		if (@event.IsActionPressed("Up") || @event.IsActionReleased("Up") || @event.IsActionPressed("Down") || @event.IsActionReleased("Down"))
 		{
-            _dir.Y = -@event.GetActionStrength("Up") + @event.GetActionStrength("Down");
+			_dir.Y = -@event.GetActionStrength("Up") + @event.GetActionStrength("Down");
 		}
 
-        if (@event.IsActionPressed("Left") || @event.IsActionReleased("Left") || @event.IsActionPressed("Right") || @event.IsActionReleased("Right"))
-        {
-            _dir.X = -@event.GetActionStrength("Left") + @event.GetActionStrength("Right");
-        }
+		if (@event.IsActionPressed("Left") || @event.IsActionReleased("Left") || @event.IsActionPressed("Right") || @event.IsActionReleased("Right"))
+		{
+			_dir.X = -@event.GetActionStrength("Left") + @event.GetActionStrength("Right");
+		}
 
 		//fix WASD strength
 		if(_dir.Length() > 0)
@@ -130,22 +131,22 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			_dir = _dir.Normalized();
 		}
 
-        if (@event.IsActionPressed("B1"))
-        {
-            _isSprinting = true;
-        }
-        if (@event.IsActionReleased("B1"))
-        {
+		if (@event.IsActionPressed("B1"))
+		{
+			_isSprinting = true;
+		}
+		if (@event.IsActionReleased("B1"))
+		{
 			_isSprinting = false;
-        }
+		}
 
 
 		// use this for mouse MOTION events. we are not handling mouse events like double click (because of controller support, at least atm)
 		// so we can treat them as buttons. 
-		if(@event is InputEventMouseMotion)
+		if(@event is InputEventMouseMotion eventMouse)
 		{
 			//could do any number of things here, but rn we are just going to "track velocities". simple-nothings for an example
-			float movementVel = (@event as InputEventMouseMotion).Velocity.Length();
+			float movementVel = eventMouse.Velocity.Length();
 			if (movementVel > _shakeThreshold) {
 				_recordedShakeVels += movementVel - _shakeThreshold;
 				//note; i'm not positive this won't be an issue with frame rate?  but it *should* be okay...
@@ -154,13 +155,13 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			}
 		}
 
-    }
+	}
 
 	protected override void Init(int difficulty)
 	{
 
-        //grab data from array
-        int minLevel = (int)_shakeTargets[0];
+		//grab data from array
+		int minLevel = (int)_shakeTargets[0];
 		int maxLevel = (int)_shakeTargets[2];
 		float minShakeAmt = (float)_shakeTargets[1];
 		float maxShakeAmt = (float)_shakeTargets[3];
@@ -174,21 +175,24 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 
 	protected override void Start()
 	{
-		_gameTimer = new Timer();
-		_gameTimer.WaitTime = _gameTime;
+        _gameTimer = new Timer();
+        _gameTimer.WaitTime = _gameTime;
 		_gameTimer.OneShot = true;
-
-		GD.Print(_gameTimer);
 
 		_gameTimer.Timeout += () => 
 		{
-			
 			if(_gameWon != MicroState.WON)
 			{
 				_gameWon = MicroState.LOST;
 			}
 			_gameStarted = false; //honestly, I would maybe move this to tracking the _gameWon, and preventing all input if _gameWon is not ONGOING, but I want to get the example done lol
-			End(); 
+			_gameTimer.QueueFree();
+            //_gameTimer.Timeout.
+
+            _gm.StartGame -= Start;
+            _gm.InitializeGame -= Init;
+
+            End(); 
 			
 		};
 
