@@ -172,6 +172,11 @@ public partial class GameManager : Node2D
 
     public PackedScene PickNewGame()
     {
+        if(!string.IsNullOrEmpty(DEBUG_LOAD_GAME))
+        {
+            return _gameSceneDict[DEBUG_LOAD_GAME];
+        }
+
         int chosenGameIndex = (int)rng.RandWeighted(_gameWeightDict.Values.ToArray());
 
         string chosenGameID = _gameWeightDict.Keys.ToArray()[chosenGameIndex];
