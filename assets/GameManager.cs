@@ -116,15 +116,10 @@ public partial class GameManager : Node2D
         }));
 
         //do whatever we need to do to transfer games
-            //TODO 
+        //TODO 
 
         //load a new game
         GameTransition.TweenCallback(Callable.From(() => { BeginNewGame(); }));
-
-
-        //now do whatever we need to under the hood to track lives and such
-
-        //then load a new game (TODO)
     }
 
     public void BeginNewGame()
