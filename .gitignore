@@ -23,7 +23,6 @@ data_*/
 mono_crash.*.json
 
 #VS
-*.csproj
 *.csproj.user
 Properties/
 
