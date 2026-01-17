@@ -14,6 +14,13 @@ public partial class BogosBintedGame : MicroBase
 
     private int _successfulShakes = 0;
 
+    [Export] Vector2 centerPos;
+    [Export] float centerRot;
+    [Export] Vector2 leftPos;
+    [Export] float leftRot;
+    [Export] Vector2 rightPos;
+    [Export] float rightRot;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -46,10 +53,24 @@ public partial class BogosBintedGame : MicroBase
 
     public override void _Input(InputEvent @event)
     {
-        //MnK input
-        if(_gm.IsMnK)
+        //MnK input is handled in the collision shape callbacks
+        if(!_gm.IsMnK && @event is InputEventJoypadMotion)
         {
-
+            GD.Print("Controller input");
+            if (@event.GetActionStrength("Left") > .5f)
+            {
+                SwapLeft();
+                GD.Print("Controller Left");
+            }
+            else if(@event.GetActionStrength("Right") > .5f)
+            {
+                SwapRight();
+                GD.Print("Controller right");
+            } else if (@event.IsActionPressed("Left") || @event.IsActionPressed("Right"))
+            {
+                SwapCenter();
+                GD.Print("Controller center");
+            }
         }
     }
 
@@ -62,6 +83,8 @@ public partial class BogosBintedGame : MicroBase
     protected override void Init(int difficulty)
     {
         _bogosBinted.Modulate = Color.FromHtml("ffffff00");
+
+        
     }
 
     /// <summary>
@@ -70,8 +93,38 @@ public partial class BogosBintedGame : MicroBase
     protected override void Start()
     {
 
+        _leftArea.MouseEntered += () =>
+        {
+            if (_gm.IsMnK)
+            {
+                SwapLeft();
+            }
+        };
 
 
+        _leftArea.MouseExited += () =>
+        {
+            if (_gm.IsMnK)
+            {
+                SwapCenter();
+            }
+        };
+
+        _rightArea.MouseEntered += () =>
+        {
+            if (_gm.IsMnK)
+            {
+                SwapRight();
+            }
+        };
+
+        _rightArea.MouseExited += () =>
+        {
+            if (_gm.IsMnK)
+            {
+                SwapCenter();
+            }
+        };
 
     }
 
@@ -87,7 +140,8 @@ public partial class BogosBintedGame : MicroBase
     private void SwapLeft()
     {
         //do the swapping visually
-
+        _bogos.Position = leftPos;
+        _bogos.RotationDegrees = leftRot;
 
 
         //check if it's worth a shake credit
@@ -103,11 +157,12 @@ public partial class BogosBintedGame : MicroBase
     private void SwapRight()
     {
         //do the swapping visually
-
+        _bogos.Position = rightPos;
+        _bogos.RotationDegrees = rightRot;
 
 
         //check if it's worth a shake credit
-        if(_visitedLeftLast)
+        if (_visitedLeftLast)
         {
             _successfulShakes++;
         }
@@ -118,6 +173,7 @@ public partial class BogosBintedGame : MicroBase
 
     private void SwapCenter()
     {
-
+        _bogos.Position = centerPos;
+        _bogos.RotationDegrees = centerRot;
     }
 }
