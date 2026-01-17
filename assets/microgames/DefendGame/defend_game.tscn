@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://cu4hcfhn1eyit"]
+
+[ext_resource type="Script" uid="uid://dtpydnxtqscav" path="res://assets/microgames/DefendGame/DefendGame.cs" id="1_7dra4"]
+[ext_resource type="PackedScene" uid="uid://bfguhnb5lb23t" path="res://assets/microgames/DefendGame/fireball.tscn" id="2_8q8ij"]
+[ext_resource type="Texture2D" uid="uid://bbonclniryuei" path="res://assets/microgames/DefendGame/defender.png" id="2_akult"]
+[ext_resource type="Texture2D" uid="uid://bdgnxngqqkqri" path="res://assets/microgames/DefendGame/ToxicBarrels.png" id="3_03yb2"]
+[ext_resource type="Texture2D" uid="uid://dqn17wmr04l63" path="res://assets/microgames/DefendGame/laser alien.png" id="4_35a5o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_akult"]
+size = Vector2(358.125, 645.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_35a5o"]
+size = Vector2(996.5, 2162.5)
+
+[node name="DefendGame" type="Node2D" node_paths=PackedStringArray("_defender", "_alien")]
+script = ExtResource("1_7dra4")
+_gameTime = 500.0
+_defender = NodePath("Defender")
+_alien = NodePath("Alien")
+_shootTime = 10000.0
+_fireballReference = ExtResource("2_8q8ij")
+_fireballSpeed = 50
+DEBUG_AUTOSTART = true
+
+[node name="Defender" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(2617, 1734)
+
+[node name="Sprite2D" type="Sprite2D" parent="Defender"]
+texture = ExtResource("2_akult")
+
+[node name="Umbrella" type="CollisionShape2D" parent="Defender"]
+position = Vector2(-220, 21)
+shape = SubResource("RectangleShape2D_akult")
+
+[node name="Barrels" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(2617, 1734)
+
+[node name="Sprite2D" type="Sprite2D" parent="Barrels"]
+position = Vector2(-528, -660)
+scale = Vector2(2.1398144, 2.1398149)
+texture = ExtResource("3_03yb2")
+
+[node name="BarrelBody" type="CollisionShape2D" parent="Barrels"]
+position = Vector2(977.75, -655.25)
+shape = SubResource("RectangleShape2D_35a5o")
+
+[node name="Alien" type="Sprite2D" parent="."]
+position = Vector2(720, -82)
+texture = ExtResource("4_35a5o")

@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfguhnb5lb23t"]
+
+[ext_resource type="Texture2D" uid="uid://equ4cylyc8wx" path="res://assets/microgames/DefendGame/fireball1.png" id="1_c3wby"]
+[ext_resource type="Script" uid="uid://2flvgqntxe5l" path="res://assets/microgames/DefendGame/Fireball.cs" id="1_tiafx"]
+[ext_resource type="Texture2D" uid="uid://dq06yuwoxv7r4" path="res://assets/microgames/DefendGame/fireball2.png" id="2_tiafx"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gjgtx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_c3wby")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tiafx")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kdlos"]
+size = Vector2(239, 117)
+
+[node name="Fireball" type="Node2D"]
+script = ExtResource("1_tiafx")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_gjgtx")
+frame_progress = 0.07725986
+offset = Vector2(244.44, -321.895)
+
+[node name="Fireball" type="Area2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fireball"]
+position = Vector2(-80.5, 1.5)
+shape = SubResource("RectangleShape2D_kdlos")
