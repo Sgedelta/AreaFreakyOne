@@ -17,7 +17,7 @@ public partial class GlassGame : MicroBase
     [Export] private float _gameTime = 7.5f;
 
     bool alienTime = false;
-    float alienTimer = 1;
+    float alienTimer = 0;
     Sprite2D alienWalk;
     Sprite2D alienMew;
 
@@ -34,8 +34,8 @@ public partial class GlassGame : MicroBase
         _gm.StartGame += Start;
         _gm.InitializeGame += Init;
 
-        alienWalk = GetTree().Root.GetNode<Sprite2D>("Alien1");
-        alienMew = GetTree().Root.GetNode<Sprite2D>("Alienmew");
+        alienWalk = GetTree().Root.GetNode<Node2D>("GlassGame").GetNode<Sprite2D>("Alien1");
+        alienMew = GetTree().Root.GetNode<Node2D>("GlassGame").GetNode<Sprite2D>("Alienmew");
 
         if (DEBUG_AUTOSTART)
         {
@@ -55,20 +55,21 @@ public partial class GlassGame : MicroBase
         float dt = (float)delta;
         if (alienTime)
         {
-            alienTimer -= dt;
+            alienTimer += dt;
             if (alienTimer > 0.2 && alienTimer < 0.4)
-                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien2.png");
+                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien4.png");
             if (alienTimer > 0.4 && alienTimer < 0.6)
                 alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien3.png");
             if (alienTimer > 0.6 && alienTimer < 0.8)
-                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien4.png");
+                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien2.png");
             if (alienTimer > 0.8 && alienTimer < 1)
-                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien5.png");
-            else
-            {
+                alienWalk.Texture = GD.Load<Texture2D>("res://assets/microgames/GlassGame/alien1.png");
+            else if (alienTimer > 1.4)
                 alienMew.Visible = true;
+            else if(alienTimer > 1.4)
+            {
+                End();
             }
-
         }
 
         CalculateProgress();
@@ -99,6 +100,7 @@ public partial class GlassGame : MicroBase
                 if (numberTaps < 0)
                 {
                     alienTime = true;
+                    _gameWon = MicroState.WON;
                     alienWalk.Visible = true;
                 }
             }
