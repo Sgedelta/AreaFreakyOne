@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmlkvumj5tx4"]
+
+[ext_resource type="Texture2D" uid="uid://xvmjfphe0iw" path="res://assets/microgames/FeedGame/FeedArt/cakeckecakecakekek.png" id="1_5p6ct"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mwy4f"]
+size = Vector2(490, 466.25)
+
+[node name="Food" type="Node2D"]
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+position = Vector2(-41, -5.875)
+shape = SubResource("RectangleShape2D_mwy4f")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.4935185, 0.49351853)
+texture = ExtResource("1_5p6ct")

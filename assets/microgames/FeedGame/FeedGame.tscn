@@ -1,3 +1,27 @@
-[gd_scene format=3 uid="uid://dewjkcisxmt8i"]
+[gd_scene load_steps=5 format=3 uid="uid://dewjkcisxmt8i"]
+
+[ext_resource type="Script" uid="uid://c1xgnbao32h20" path="res://assets/microgames/FeedGame/FeedGame.cs" id="1_f3i8b"]
+[ext_resource type="PackedScene" uid="uid://cmlkvumj5tx4" path="res://assets/microgames/FeedGame/Food.tscn" id="2_ejln3"]
+[ext_resource type="Texture2D" uid="uid://b5ltdfm5cjsvn" path="res://assets/microgames/FeedGame/FeedArt/why are you blue.png" id="2_f3i8b"]
+[ext_resource type="PackedScene" uid="uid://dwqocejv570av" path="res://assets/microgames/FeedGame/Xeno.tscn" id="2_g7aof"]
 
 [node name="FeedGame" type="Node2D"]
+script = ExtResource("1_f3i8b")
+_minFoods = 3
+_maxFoods = 25
+_foodPrefab = ExtResource("2_ejln3")
+_debugMessages = true
+DEBUG_AUTOSTART = true
+
+[node name="PinkXeno" parent="." instance=ExtResource("2_g7aof")]
+position = Vector2(448, 1696)
+
+[node name="BlueXeno" parent="." instance=ExtResource("2_g7aof")]
+position = Vector2(3569, 1698)
+
+[node name="Sprite2D" parent="BlueXeno" index="0"]
+position = Vector2(9, -13)
+texture = ExtResource("2_f3i8b")
+offset = Vector2(-450, 0)
+
+[editable path="BlueXeno"]

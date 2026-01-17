@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dam081bip3hwt"]
+[gd_scene load_steps=8 format=3 uid="uid://dam081bip3hwt"]
 
 [ext_resource type="Script" uid="uid://cnoyukngw3l7r" path="res://assets/GameManager.cs" id="1_iirjy"]
 [ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="2_uv11x"]
@@ -16,7 +16,9 @@ size = Vector2(3840, 50)
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_iirjy")
-_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel")])
+_debugMessages = true
+_debugLoadGame = "feed_game"
+_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel"), ExtResource("4_uikel")])
 
 [node name="DoorL" type="Sprite2D" parent="."]
 unique_name_in_owner = true

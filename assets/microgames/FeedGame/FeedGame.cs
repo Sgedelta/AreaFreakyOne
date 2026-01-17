@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class FeedGame : MicroBase 
+public partial class FeedGame : MicroBase
 {
 	/* Authors: Carl Browning
 	 * Last Modified: 1/17/2026
@@ -14,7 +14,9 @@ public partial class FeedGame : MicroBase
 	[Export] private int _minFoods;
 	[Export] private int _maxFoods;
 
-	[Export] private Godot.Collections.Array<bool> foods;
+	[Export] private Godot.Collections.Array<bool> _foods;
+
+	[Export] private PackedScene _foodPrefab;
 
 	RandomNumberGenerator _rng;
 
@@ -26,8 +28,6 @@ public partial class FeedGame : MicroBase
 		_gm.StartGame += Start;
 		_gm.InitializeGame += Init;
 
-
-		
 
 		if (DEBUG_AUTOSTART)
 		{
@@ -66,23 +66,37 @@ public partial class FeedGame : MicroBase
 
 	protected override void Init(int difficulty)
 	{
-		float diffScale = Mathf.Clamp((float)(difficulty - _minFoods) / (float)(_maxFoods - _minFoods), 0, 1);
-		int foodCount = Mathf.RoundToInt(Mathf.Lerp((float)_minFoods, (float)_maxFoods, diffScale));
+		/*float diffScale = Mathf.Clamp((float)(difficulty - _minFoods) / (float)(_maxFoods - _minFoods), 0, 1);
+		int foodCount = Mathf.RoundToInt(Mathf.Lerp((float)_minFoods, (float)_maxFoods, diffScale));*/
 
-		_rng = new RandomNumberGenerator();
 
-		for (int i = 0; i < foodCount; i++)
+        _rng = new RandomNumberGenerator();
+
+        _foods = new Godot.Collections.Array<bool>();
+
+
+        for (int i = 0; i < 3; i++)
 		{
 			if (_rng.Randf() < .5)
 			{
-				foods.Add(true);
-			}
-			else
+                _foods.Add(true);
+				
+				Node2D foodInstance = (Node2D)_foodPrefab.Instantiate();
+				foodInstance.Position = new Vector2(2000, i * 400);
+				AddChild(foodInstance);
+            }
+            else
 			{
-				foods.Add(false);
-			}
+                _foods.Add(false);
+                Node2D foodInstance = (Node2D)_foodPrefab.Instantiate();
+                foodInstance.GetChild<Sprite2D>(1).Texture = GD.Load<Texture2D>("res://assets/microgames/FeedGame/FeedArt/donut.png");
+                foodInstance.Position = new Vector2(2000, i * 400);
+                AddChild(foodInstance);
 
-		}
+
+            }
+
+        }
 	}
 
 	protected override void Start()

@@ -12,12 +12,12 @@ public partial class GameManager : Node2D
 
 	//=========VARIABLES=========
 
-    //==internal vars==
-    private RandomNumberGenerator _rng;
-    private MicroBase _loadedGame;
+	//==internal vars==
+	private RandomNumberGenerator _rng;
+	private MicroBase _loadedGame;
 
 
-    //==Editor Exposed Vars==
+	//==Editor Exposed Vars==
 
 	//Holds all the details about various debug functions
 	[ExportGroup("Debug")]
@@ -46,13 +46,13 @@ public partial class GameManager : Node2D
 
 	public int CurrentDifficulty = 0;
 
-    //==Helper Vars==
-    private bool _isMnK = true;
-    public bool IsMnK { get { return _isMnK; }}
+	//==Helper Vars==
+	private bool _isMnK = true;
+	public bool IsMnK { get { return _isMnK; }}
 
-    //a controller deadzone measure. A bit of a cop out, but this is is simple version - if we wanted deadzones for specific sticks or deadzones for even directions on sticks, this will need to be updated
-    // used in GM Input() and GM Ready. Will need to be updated when we allow for deadzones being changed.
-    private float _controllerDeadzone = .2f;
+	//a controller deadzone measure. A bit of a cop out, but this is is simple version - if we wanted deadzones for specific sticks or deadzones for even directions on sticks, this will need to be updated
+	// used in GM Input() and GM Ready. Will need to be updated when we allow for deadzones being changed.
+	private float _controllerDeadzone = .2f;
 
 
 	//=========SIGNALS=========
@@ -77,11 +77,11 @@ public partial class GameManager : Node2D
 
 	}
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        CurrentLives = _startingLives;
-        _rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		CurrentLives = _startingLives;
+		_rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
 
 		//construct packedScene dict and initial Weights
 		foreach (GameInfo info in _gameInfos)
@@ -96,10 +96,10 @@ public partial class GameManager : Node2D
 			GD.Print($"[GM] {_gameWeightDict}");
 		}
 
-        _controllerDeadzone = InputMap.ActionGetDeadzone("Up"); //using up as a proxy for all deadzones. Update if more we allow for more specific things
-        
-        
-    }
+		_controllerDeadzone = InputMap.ActionGetDeadzone("Up"); //using up as a proxy for all deadzones. Update if more we allow for more specific things
+		
+		
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -107,26 +107,26 @@ public partial class GameManager : Node2D
 
 	}
 
-    // check for mnk or controller input
-    //  note: should be a way to check for specific controllers too...
-    public override void _Input(InputEvent @event)
-    {
-        if(@event is InputEventKey or InputEventMouse)
-        {
-            _isMnK = true;
-        }
-        else if(@event is InputEventJoypadButton)
-        {
-            _isMnK = false;
-        }
-        //buttons don't need deadzones, motions do
-        else if(@event is InputEventJoypadMotion motion && motion.AxisValue > _controllerDeadzone)
-        {
-            _isMnK = false;
-        }
-    }
+	// check for mnk or controller input
+	//  note: should be a way to check for specific controllers too...
+	public override void _Input(InputEvent @event)
+	{
+		if(@event is InputEventKey or InputEventMouse)
+		{
+			_isMnK = true;
+		}
+		else if(@event is InputEventJoypadButton)
+		{
+			_isMnK = false;
+		}
+		//buttons don't need deadzones, motions do
+		else if(@event is InputEventJoypadMotion motion && motion.AxisValue > _controllerDeadzone)
+		{
+			_isMnK = false;
+		}
+	}
 
-    //=========METHODS=========
+	//=========METHODS=========
 
 	public void OnGameEnd(int wonInput)
 	{
@@ -136,15 +136,15 @@ public partial class GameManager : Node2D
 		//hide the game
 		Tween GameTransition = GetTree().CreateTween();
 
-        //close
-        GameTransition.TweenProperty(GetNode("%DoorL"), "position:x", 960.0f, 1.0f).From(-960.0f); //values are temp
-        GameTransition.Parallel().TweenProperty(GetNode("%DoorR"), "position:x", 2880.0f, 1.0f).From(4800.0f); //values are temp
-        //unload game
-        GameTransition.TweenCallback(Callable.From(() =>
-        {
-            _loadedGame?.QueueFree();
-            _loadedGame = null;
-        }));
+		//close
+		GameTransition.TweenProperty(GetNode("%DoorL"), "position:x", 960.0f, 1.0f).From(-960.0f); //values are temp
+		GameTransition.Parallel().TweenProperty(GetNode("%DoorR"), "position:x", 2880.0f, 1.0f).From(4800.0f); //values are temp
+		//unload game
+		GameTransition.TweenCallback(Callable.From(() =>
+		{
+			_loadedGame?.QueueFree();
+			_loadedGame = null;
+		}));
 
 		//do whatever we need to do to transfer games
 		//TODO 
@@ -163,18 +163,18 @@ public partial class GameManager : Node2D
 		//tween to transition
 		Tween GameTransition = GetTree().CreateTween();
 
-        //load a new game and THEN hook up to it and tell it to init
-        GameTransition.TweenCallback(Callable.From(() =>
-        {
-            _loadedGame = (MicroBase)newGameScene.Instantiate();
-            _loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
-            GetTree().Root.AddChild(_loadedGame);
-        }));
-        GameTransition.TweenCallback(Callable.From(() =>
-        {
-            _loadedGame.GameEnd += OnGameEnd;
-            _loadedGame.GameProgressReport += HandleProgress;
-            
+		//load a new game and THEN hook up to it and tell it to init
+		GameTransition.TweenCallback(Callable.From(() =>
+		{
+			_loadedGame = (MicroBase)newGameScene.Instantiate();
+			_loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
+			GetTree().Root.AddChild(_loadedGame);
+		}));
+		GameTransition.TweenCallback(Callable.From(() =>
+		{
+			_loadedGame.GameEnd += OnGameEnd;
+			_loadedGame.GameProgressReport += HandleProgress;
+			
 
 			EmitSignal(SignalName.InitializeGame);
 
@@ -191,10 +191,10 @@ public partial class GameManager : Node2D
 		}));
 	}
 
-    public void HandleProgress(float progressRatio)
-    {
-        GetNode<Node2D>("%ChudProgressBar").Scale = new Vector2(progressRatio, 1);
-    }
+	public void HandleProgress(float progressRatio)
+	{
+		GetNode<Node2D>("%ChudProgressBar").Scale = new Vector2(progressRatio, 1);
+	}
 
 	public PackedScene PickNewGame()
 	{
@@ -203,7 +203,7 @@ public partial class GameManager : Node2D
 			return _gameSceneDict[DEBUG_LOAD_GAME];
 		}
 
-        int chosenGameIndex = (int)_rng.RandWeighted(_gameWeightDict.Values.ToArray());
+		int chosenGameIndex = (int)_rng.RandWeighted(_gameWeightDict.Values.ToArray());
 
 		string chosenGameID = _gameWeightDict.Keys.ToArray()[chosenGameIndex];
 		
