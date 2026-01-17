@@ -1,21 +1,31 @@
+using System;
 using Godot;
+using Vector2 = Godot.Vector2;
 
 public partial class ContainerGame : MicroBase
 {
 	//Stuff being [Export]ed to the editor
 
-	[Export] private float _handSpeed = 200f;
-
 	private Timer _gameTimer;
 	[Export] private float _gameTime = 10f;
+	[Export] private int _bucketFrameDelay = 255; //the number of frames the bucket will wait at the extremities of the viewport before changing direction
+	[Export] private float _speed = 200f;
+
+	//CONSTANTS, describing limits of bucket movement (so that it doesn't clip outside the viewport)
+	private int _RIGHT_LIMIT = 3487;
+	private int _LEFT_LIMIT = 335;
+
+	//SPRITES
+	//private Sprite2D _hand; //NOT USED; no hand sprite yet
+	private Node2D _bucket;
+	private RigidBody2D _goober1;
+	private RigidBody2D _goober2;
 
 
-	//private Sprite2D _hand;
-	private Sprite2D _bucket;
-	private Sprite2D _goober1;
-	private Sprite2D _goober2;
-
-
+	//OTHER VARs
+	private int _dir = 1;
+	private int _storedDir = 1;
+	private int _count = 0;
 	private bool _dropped1;
 	private bool _dropped2;
 
@@ -28,9 +38,12 @@ public partial class ContainerGame : MicroBase
 		_gm.InitializeGame += Init;
 
 		//_hand = getNode<Sprite2D>("%Hand");
-		_goober1 = GetNode<Sprite2D>("%Goober1");
-		_goober2 = GetNode<Sprite2D>("%Goober2");
+		_goober1 = GetNode<RigidBody2D>("%Goober1");
+		_goober2 = GetNode<RigidBody2D>("%Goober2");
+		_bucket = GetNode<Node2D>("%Bucket");
 		
+		_goober1.GravityScale = 0f;
+		_goober2.GravityScale = 0f;
 
 		if (DEBUG_AUTOSTART){
 			Init(0);
@@ -42,41 +55,86 @@ public partial class ContainerGame : MicroBase
 	{
 		//dont do anything til game starts
 
-		if (!_gameStarted){
+		if (_gameWon != MicroState.ONGOING){
 			return;
 		}
 
 		float dt = (float) delta; //"casting to float for ease of use with vectors and such"
+		//Move the bucket
+		_bucket.Position += new Vector2(_dir * _speed * dt, 0);
+		//check if bucket is at extremities; only x-axis matters
+		if (_bucket.Position[0] >= _RIGHT_LIMIT || _bucket.Position[0] <= _LEFT_LIMIT)
+		{
+			//check if bucket has already been stopped
+			if (_dir == 0)
+			{
+				//check if the bucket has waited enough
+				if (_count == _bucketFrameDelay)
+				{
+					//reset count, start moving in the stored direction
+					_count = 0;
+					_dir = _storedDir;
+				}
+				else
+				{
+					//wait one frame
+					_count += 1;
+				}
+			}
+			else
+			{
+				if (Math.Abs(_RIGHT_LIMIT - _bucket.Position[0]) < Math.Abs(_LEFT_LIMIT - _bucket.Position[0]))
+				{
+					_bucket.Position = new Vector2(_RIGHT_LIMIT, _bucket.Position[1]);
+				}
+				else
+				{
+					_bucket.Position = new Vector2(_LEFT_LIMIT, _bucket.Position[1]);
+				}
+				_storedDir = _dir * -1; //reverse direction
+				_dir = 0; //begin waiting
+			}
+		}
+
+		if (_dropped1)
+		{
+			_goober1.GravityScale = 3f;
+		}
+		if (_dropped2)
+		{
+			//wait
+		}
 
 		CalculateProgress();
 	}
 
 	public override void _Input(InputEvent @event){
-		if (!_gameStarted){
+		if (_gameWon != MicroState.ONGOING){
 			return;
 		}
 
 		//processing button input
 		if (@event.IsActionPressed("B1")){
 			_dropped1 = true;
+			GD.Print("dropped.");
 		}
 	}
 
 	protected override void Init(int difficulty){
 		//this is where you prep the level
+		//WHAT IS THIS FUNCTION EVEN FOR
+		//nothing else to do
 	}
 
 	protected override void Start(){
 		_gameTimer = new Timer();
 		_gameTimer.WaitTime = _gameTime;
 		_gameTimer.OneShot = true;
-
 		_gameTimer.Timeout += () =>
 		{
 			if(_gameWon != MicroState.WON){
 				_gameWon = MicroState.LOST;
 			}
-			_gameStarted = false; //switch to tracking _gameWon and prevent input if _gameWon is not ONGOING
 			_gameTimer.QueueFree();
 
 			_gm.StartGame -= Start;
@@ -84,12 +142,9 @@ public partial class ContainerGame : MicroBase
 
 			End();
 		};
-
+		if (DEBUG_MESSAGES) GD.Print("Game is Starting!");
 		AddChild(_gameTimer);
 		_gameTimer.Start();
-
-
-		_gameStarted = true;
 		_gameWon = MicroState.ONGOING;
 	}
 
