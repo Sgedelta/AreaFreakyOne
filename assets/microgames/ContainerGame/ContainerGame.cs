@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using Vector2 = Godot.Vector2;
 
@@ -41,6 +42,8 @@ public partial class ContainerGame : MicroBase
 		_goober1 = GetNode<RigidBody2D>("%Goober1");
 		_goober2 = GetNode<RigidBody2D>("%Goober2");
 		_bucket = GetNode<Node2D>("%Bucket");
+		var catchArea = _bucket.GetNode<Area2D>("CatchArea");
+		catchArea.BodyEntered += OnBucketCatch;
 		
 		_goober1.GravityScale = 0f;
 		_goober2.GravityScale = 0f;
@@ -51,6 +54,30 @@ public partial class ContainerGame : MicroBase
 		}
 	}
 
+	public void OnBucketCatch(Node body)
+	{
+		if (body is RigidBody2D item)
+		{
+			//Stop physics motion
+			item.LinearVelocity = Vector2.Zero;
+			item.AngularVelocity = 0.0f;
+
+			//freeze the item's simulation
+			item.Freeze = true;
+
+			//snap to the bucket first
+			item.GlobalPosition = _bucket.GlobalPosition + new Vector2(0,10); //offset so its INSIDE the bucket
+
+			//turn down gravity, mark item as no longer falling
+			if (item.Name == "Goober1")
+			{
+				_dropped1 = false;
+				var gooberCollider = _goober1.GetNode<CollisionPolygon2D>("CollisionPolygon2D");
+				gooberCollider.Disabled = true;
+			}
+			else if(item.Name == "Goober2"){_dropped2 = false;}
+		}
+	}
 	public override void _Process(double delta)
 	{
 		//dont do anything til game starts
@@ -58,6 +85,7 @@ public partial class ContainerGame : MicroBase
 		if (_gameWon != MicroState.ONGOING){
 			return;
 		}
+		if (DEBUG_MESSAGES){GD.Print("Freeze:" + _goober1.Freeze + "\nGravityScale:" + _goober1.GravityScale);}
 
 		float dt = (float) delta; //"casting to float for ease of use with vectors and such"
 		//Move the bucket
@@ -83,6 +111,7 @@ public partial class ContainerGame : MicroBase
 			}
 			else
 			{
+				//check if bucket is about to leave screen and if yes, snap to the closest limit
 				if (Math.Abs(_RIGHT_LIMIT - _bucket.Position[0]) < Math.Abs(_LEFT_LIMIT - _bucket.Position[0]))
 				{
 					_bucket.Position = new Vector2(_RIGHT_LIMIT, _bucket.Position[1]);
@@ -91,18 +120,10 @@ public partial class ContainerGame : MicroBase
 				{
 					_bucket.Position = new Vector2(_LEFT_LIMIT, _bucket.Position[1]);
 				}
+				
 				_storedDir = _dir * -1; //reverse direction
 				_dir = 0; //begin waiting
 			}
-		}
-
-		if (_dropped1)
-		{
-			_goober1.GravityScale = 3f;
-		}
-		if (_dropped2)
-		{
-			//wait
 		}
 
 		CalculateProgress();
@@ -116,14 +137,14 @@ public partial class ContainerGame : MicroBase
 		//processing button input
 		if (@event.IsActionPressed("B1")){
 			_dropped1 = true;
+			_goober1.GravityScale = 3f;
 			GD.Print("dropped.");
 		}
 	}
 
 	protected override void Init(int difficulty){
-		//this is where you prep the level
+		//this is where you prep the level? i think?
 		//WHAT IS THIS FUNCTION EVEN FOR
-		//nothing else to do
 	}
 
 	protected override void Start(){
