@@ -4,17 +4,17 @@ using System.Security.Cryptography;
 
 public enum MicroState
 {
-    WAITING,
-    ONGOING,
-    WON,
-    LOST
+	WAITING,
+	ONGOING,
+	WON,
+	LOST
 }
 
 
 public partial class MicroBase : Node2D
 {
-    //Authors: Sam Easton
-    //While the MicroBase is not an abstract class (because this doesn't totally play nice), it should be treated as such
+	//Authors: Sam Easton
+	//While the MicroBase is not an abstract class (because this doesn't totally play nice), it should be treated as such
     //MicroBase is a "abstract" class that is used as the base class for all top-level scripts that run MicroGames (MicroGame Managers)
     //it handles things that all micro games share, and implements a few methods that must be overriden in the inherited classes
 

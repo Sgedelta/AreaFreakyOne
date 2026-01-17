@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhqfkmo6utrep"]
+
+[ext_resource type="Script" uid="uid://db68t8be1djkn" path="res://assets/microgames/DontGame/DontGame.cs" id="1_8n4n3"]
+[ext_resource type="Texture2D" uid="uid://cx12xprastmmj" path="res://assets/microgames/DontGame/DontGameAssets/DontGame_Autism_Sprite.png" id="2_hx33o"]
+
+[node name="ExampleGame" type="Node2D"]
+script = ExtResource("1_8n4n3")
+_gameTime = 5.0
+DEBUG_AUTOSTART = true
+
+[node name="Player" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(1814, 974)
+texture = ExtResource("2_hx33o")
