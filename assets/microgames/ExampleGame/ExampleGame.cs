@@ -37,7 +37,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	public override void _Ready()
 	{
 		_gm = GetTree().Root.GetNode<GameManager>("GameManager");
-		//make SURE to unsubscribe before calling end!
+		// End unsubscribes these, but anything else you subscribe to these signals NEEDS to be unsubscribed
 		_gm.StartGame += Start;
 		_gm.InitializeGame += Init;
 
@@ -187,10 +187,6 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			}
 			_gameStarted = false; //honestly, I would maybe move this to tracking the _gameWon, and preventing all input if _gameWon is not ONGOING, but I want to get the example done lol
 			_gameTimer.QueueFree();
-            //_gameTimer.Timeout.
-
-            _gm.StartGame -= Start;
-            _gm.InitializeGame -= Init;
 
             End(); 
 			

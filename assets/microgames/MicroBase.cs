@@ -87,6 +87,8 @@ public partial class MicroBase : Node2D
     /// </summary>
     protected virtual void End()
     {
+        _gm.StartGame -= Start;
+        _gm.InitializeGame -= Init;
         EmitSignal(SignalName.GameEnd, (int)_gameWon);   
     }
 

@@ -61,7 +61,7 @@ public partial class GameManager : Node2D
     //=========GODOT METHODS=========
 
     public GameManager()
-    {
+    {   
        
 
     }
@@ -199,7 +199,7 @@ public partial class GameManager : Node2D
             float[] weights = info.DifficultyWeights.Values.ToArray();
             float foundWeight = 0;
 
-            //lerps internally and extends lowest and highest values to all difficulties out of range. Assume 
+            //lerps internally and extends lowest and highest values to all difficulties out of range. 
             for(int i = 0; i < difficulties.Length; i++)
             {
                 int diff = difficulties[i];
