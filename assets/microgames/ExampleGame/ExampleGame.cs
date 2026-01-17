@@ -175,8 +175,8 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 
 	protected override void Start()
 	{
-        _gameTimer = new Timer();
-        _gameTimer.WaitTime = _gameTime;
+		_gameTimer = new Timer();
+		_gameTimer.WaitTime = _gameTime;
 		_gameTimer.OneShot = true;
 
 		_gameTimer.Timeout += () => 
@@ -188,7 +188,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			_gameStarted = false; //honestly, I would maybe move this to tracking the _gameWon, and preventing all input if _gameWon is not ONGOING, but I want to get the example done lol
 			_gameTimer.QueueFree();
 
-            End(); 
+			End(); 
 			
 		};
 
