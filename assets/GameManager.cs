@@ -46,7 +46,6 @@ public partial class GameManager : Node2D
 
     public int CurrentDifficulty = 0;
 
-
     //==Helper Vars==
     private bool _isMnK = true;
     public bool IsMnK { get { return _isMnK; }}
@@ -194,7 +193,7 @@ public partial class GameManager : Node2D
 
     public void HandleProgress(float progressRatio)
     {
-        //TODO
+        GetNode<Node2D>("%ChudProgressBar").Scale = new Vector2(progressRatio, 1);
     }
 
     public PackedScene PickNewGame()
