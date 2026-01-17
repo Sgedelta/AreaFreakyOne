@@ -1,3 +1,50 @@
-[gd_scene format=3 uid="uid://ccycmq4rv8ivj"]
+[gd_scene load_steps=5 format=3 uid="uid://ccycmq4rv8ivj"]
+
+[ext_resource type="Texture2D" uid="uid://nsoralveonnm" path="res://assets/microgames/ContainerGame/bucket_bottom.png" id="1_l7yph"]
+[ext_resource type="Texture2D" uid="uid://b1p67xb41cahs" path="res://assets/microgames/ContainerGame/ContainerAlien.png" id="1_pnicd"]
+[ext_resource type="Texture2D" uid="uid://b8l411iuppn3a" path="res://assets/microgames/ContainerGame/clip.png" id="2_d63gj"]
+[ext_resource type="Texture2D" uid="uid://rrvorvkt408l" path="res://assets/microgames/ContainerGame/bucket_hole.png" id="4_ttdq1"]
 
 [node name="ContainerGame" type="Node2D"]
+metadata/_edit_vertical_guides_ = [1920.0]
+
+[node name="Clothesline" type="Line2D" parent="."]
+position = Vector2(0, 102)
+points = PackedVector2Array(0, 197, 3840, 197)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Bucket" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+top_level = true
+position = Vector2(1920, 1890)
+texture = ExtResource("1_l7yph")
+
+[node name="Clip 1" type="Sprite2D" parent="."]
+top_level = true
+position = Vector2(381, 231)
+scale = Vector2(0.25185186, 0.25185186)
+texture = ExtResource("2_d63gj")
+
+[node name="Clip 2" type="Sprite2D" parent="."]
+top_level = true
+position = Vector2(3499, 231)
+scale = Vector2(0.25185186, 0.25185186)
+texture = ExtResource("2_d63gj")
+
+[node name="Goober1" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(391, 476.99994)
+scale = Vector2(0.4101852, 0.4101852)
+texture = ExtResource("1_pnicd")
+
+[node name="Goober2" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(3511, 476.00003)
+scale = Vector2(0.41, 0.41)
+texture = ExtResource("1_pnicd")
+
+[node name="BucketHole" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+show_behind_parent = true
+position = Vector2(1920, 1890)
+texture = ExtResource("4_ttdq1")

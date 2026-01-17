@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameInfo" load_steps=3 format=3 uid="uid://cfnohga7x5f8l"]
+
+[ext_resource type="PackedScene" uid="uid://ccycmq4rv8ivj" path="res://assets/microgames/ContainerGame/container_game.tscn" id="1_3nw3s"]
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="1_oock1"]
+
+[resource]
+script = ExtResource("1_oock1")
+GameScene = ExtResource("1_3nw3s")
+ID = "container_game"
+metadata/_custom_type_script = "uid://s6ubm32pcy"
