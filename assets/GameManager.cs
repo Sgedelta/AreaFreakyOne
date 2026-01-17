@@ -13,8 +13,11 @@ public partial class GameManager : Node2D
     //=========VARIABLES=========
 
     //==internal vars==
-    RandomNumberGenerator rng;
-    MicroBase loadedGame;
+    private RandomNumberGenerator _rng;
+    private MicroBase _loadedGame;
+
+
+    //==Editor Exposed Vars==
 
     //Holds all the details about various debug functions
     [ExportGroup("Debug")]
@@ -44,6 +47,15 @@ public partial class GameManager : Node2D
     public int CurrentDifficulty = 0;
 
 
+    //==Helper Vars==
+    private bool _isMnK = true;
+    public bool IsMnK { get { return _isMnK; }}
+
+    //a controller deadzone measure. A bit of a cop out, but this is is simple version - if we wanted deadzones for specific sticks or deadzones for even directions on sticks, this will need to be updated
+    // used in GM Input() and GM Ready. Will need to be updated when we allow for deadzones being changed.
+    private float _controllerDeadzone = .2f;
+
+
     //=========SIGNALS=========
 
     /// <summary>
@@ -70,7 +82,7 @@ public partial class GameManager : Node2D
     public override void _Ready()
     {
         CurrentLives = _startingLives;
-        rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
+        _rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
 
         //construct packedScene dict and initial Weights
         foreach (GameInfo info in _gameInfos)
@@ -85,6 +97,7 @@ public partial class GameManager : Node2D
             GD.Print($"[GM] {_gameWeightDict}");
         }
 
+        _controllerDeadzone = InputMap.ActionGetDeadzone("Up"); //using up as a proxy for all deadzones. Update if more we allow for more specific things
         
         
     }
@@ -93,6 +106,25 @@ public partial class GameManager : Node2D
     public override void _Process(double delta)
     {
 
+    }
+
+    // check for mnk or controller input
+    //  note: should be a way to check for specific controllers too...
+    public override void _Input(InputEvent @event)
+    {
+        if(@event is InputEventKey or InputEventMouse)
+        {
+            _isMnK = true;
+        }
+        else if(@event is InputEventJoypadButton)
+        {
+            _isMnK = false;
+        }
+        //buttons don't need deadzones, motions do
+        else if(@event is InputEventJoypadMotion motion && motion.AxisValue > _controllerDeadzone)
+        {
+            _isMnK = false;
+        }
     }
 
     //=========METHODS=========
@@ -111,8 +143,8 @@ public partial class GameManager : Node2D
         //unload game
         GameTransition.TweenCallback(Callable.From(() =>
         {
-            loadedGame?.QueueFree();
-            loadedGame = null;
+            _loadedGame?.QueueFree();
+            _loadedGame = null;
         }));
 
         //do whatever we need to do to transfer games
@@ -135,14 +167,14 @@ public partial class GameManager : Node2D
         //load a new game and THEN hook up to it and tell it to init
         GameTransition.TweenCallback(Callable.From(() =>
         {
-            loadedGame = (MicroBase)newGameScene.Instantiate();
-            loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
-            GetTree().Root.AddChild(loadedGame);
+            _loadedGame = (MicroBase)newGameScene.Instantiate();
+            _loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
+            GetTree().Root.AddChild(_loadedGame);
         }));
         GameTransition.TweenCallback(Callable.From(() =>
         {
-            loadedGame.GameEnd += OnGameEnd;
-            loadedGame.GameProgressReport += HandleProgress;
+            _loadedGame.GameEnd += OnGameEnd;
+            _loadedGame.GameProgressReport += HandleProgress;
             
 
             EmitSignal(SignalName.InitializeGame);
@@ -172,7 +204,7 @@ public partial class GameManager : Node2D
             return _gameSceneDict[DEBUG_LOAD_GAME];
         }
 
-        int chosenGameIndex = (int)rng.RandWeighted(_gameWeightDict.Values.ToArray());
+        int chosenGameIndex = (int)_rng.RandWeighted(_gameWeightDict.Values.ToArray());
 
         string chosenGameID = _gameWeightDict.Keys.ToArray()[chosenGameIndex];
         
