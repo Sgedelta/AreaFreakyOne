@@ -17,7 +17,7 @@ public partial class ContainerGame : MicroBase
 	private int _LEFT_LIMIT = 335;
 
 	//SPRITES
-	//private Sprite2D _hand; //NOT USED; no hand sprite yet
+	private Sprite2D _hand; //TEMPORARY SPRITE, will have to be updated
 	private Node2D _bucket;
 	private RigidBody2D _goober1;
 	private RigidBody2D _goober2;
@@ -25,10 +25,16 @@ public partial class ContainerGame : MicroBase
 
 	//OTHER VARs
 	private int _dir = 1;
+	static RandomNumberGenerator rng = new RandomNumberGenerator();
 	private int _storedDir = 1;
 	private int _count = 0;
+	private float _temp = rng.Randf();
+	private int _dropping = -1;
 	private bool _dropped1;
 	private bool _dropped2;
+
+	private bool _caught1 = false;
+	private bool _caught2 = false;
 
 	private bool _failed;
 
@@ -38,17 +44,7 @@ public partial class ContainerGame : MicroBase
 		_gm.StartGame += Start;
 		_gm.InitializeGame += Init;
 
-		//_hand = getNode<Sprite2D>("%Hand");
-		_goober1 = GetNode<RigidBody2D>("%Goober1");
-		_goober2 = GetNode<RigidBody2D>("%Goober2");
-		_bucket = GetNode<Node2D>("%Bucket");
-		var catchArea = _bucket.GetNode<Area2D>("CatchArea");
-		catchArea.BodyEntered += OnBucketCatch;
-		
-		_goober1.GravityScale = 0f;
-		_goober2.GravityScale = 0f;
-
-		if (DEBUG_AUTOSTART){
+		if (DEBUG_AUTOSTART){ //starts game that youre on by default
 			Init(0);
 			Start();
 		}
@@ -58,26 +54,23 @@ public partial class ContainerGame : MicroBase
 	{
 		if (body is RigidBody2D item)
 		{
-			//Stop physics motion
-			item.LinearVelocity = Vector2.Zero;
-			item.AngularVelocity = 0.0f;
-
-			//freeze the item's simulation
-			item.Freeze = true;
-
-			//snap to the bucket first
-			item.GlobalPosition = _bucket.GlobalPosition + new Vector2(0,10); //offset so its INSIDE the bucket
-
-			//turn down gravity, mark item as no longer falling
 			if (item.Name == "Goober1")
 			{
-				_dropped1 = false;
-				var gooberCollider = _goober1.GetNode<CollisionPolygon2D>("CollisionPolygon2D");
-				gooberCollider.Disabled = true;
+				_caught1 = true;
 			}
-			else if(item.Name == "Goober2"){_dropped2 = false;}
+			else if (item.Name == "Goober2")
+			{
+				_caught2 = true;
+			}
+			Callable.From(() => {item.Reparent(_bucket);}).CallDeferred(); //"catch" the goober
 		}
 	}
+
+	public void OnBucketMiss(Node body)
+	{
+		_failed = true;
+	}
+
 	public override void _Process(double delta)
 	{
 		//dont do anything til game starts
@@ -85,8 +78,6 @@ public partial class ContainerGame : MicroBase
 		if (_gameWon != MicroState.ONGOING){
 			return;
 		}
-		if (DEBUG_MESSAGES){GD.Print("Freeze:" + _goober1.Freeze + "\nGravityScale:" + _goober1.GravityScale);}
-
 		float dt = (float) delta; //"casting to float for ease of use with vectors and such"
 		//Move the bucket
 		_bucket.Position += new Vector2(_dir * _speed * dt, 0);
@@ -125,6 +116,31 @@ public partial class ContainerGame : MicroBase
 				_dir = 0; //begin waiting
 			}
 		}
+		//win loss check
+		if(_caught1 && _caught2)
+		{
+			_gameWon = MicroState.WON;
+			Tween winTween = GetTree().CreateTween();
+			//winning animation feedback:: close the bucket.
+			//first, make it visible
+			GetNode<Sprite2D>("%Lid").Visible = true;
+			GetNode<Sprite2D>("%Lid").GlobalPosition = new Vector2(_bucket.Position[0], 0);
+			winTween.TweenProperty(GetNode("%Lid"),"position:y",_bucket.Position[1] - 250.0f, 1.0f).From(_bucket.Position[1] - 750.0f);
+			winTween.Parallel().TweenProperty(GetNode("%Lid"), "rotation", 0.0f, 1.0f).From(45.0f);
+			winTween.Parallel().TweenProperty(GetNode("%Lid"), "scale:x", 1.482f, 0.75f).From(9f);
+			winTween.TweenCallback(Callable.From(End));
+			
+		}else if (_failed)
+		{
+			_gameWon = MicroState.LOST;
+			GD.Print("Game is lost.");
+			Tween lossTween = GetTree().CreateTween();
+			lossTween.TweenProperty(GetNode("%Bucket"), "rotation_degrees", 90, 0.25f);
+			//lossTween.TweenProperty(GetNode("%Goober1"), "position.x")
+			//lossTween.TweenProperty() //do losing animation via tween here
+
+			lossTween.TweenCallback(Callable.From(End));
+		}
 
 		CalculateProgress();
 	}
@@ -136,15 +152,58 @@ public partial class ContainerGame : MicroBase
 
 		//processing button input
 		if (@event.IsActionPressed("B1")){
-			_dropped1 = true;
-			_goober1.GravityScale = 3f;
-			GD.Print("dropped.");
+			//checking drop based on the random start, ensuring once 2nd guy is dropped hand doesnt move.
+			if (_dropping == 0)
+			{
+				_dropped1 = true;
+				_goober1.GravityScale = 3f;
+				if (!_dropped2)
+				{
+					_dropping = 1;
+					_hand.Position = new Vector2(3483,149);
+				}
+				
+			}
+			else
+			{
+				_dropped2 = true;
+				_goober2.GravityScale = 3f;
+				if (!_dropped1)
+				{
+					_dropping = 0;
+					_hand.Position = new Vector2(367,149);
+				}
+			}
+			if (DEBUG_MESSAGES)GD.Print("dropped.");
 		}
 	}
 
 	protected override void Init(int difficulty){
-		//this is where you prep the level? i think?
-		//WHAT IS THIS FUNCTION EVEN FOR
+		//this is where you prep the level? i think? make it ready to play.
+		
+		_hand = GetNode<Sprite2D>("%Hand");
+		_goober1 = GetNode<RigidBody2D>("%Goober1");
+		_goober2 = GetNode<RigidBody2D>("%Goober2");
+		_bucket = GetNode<Node2D>("%Bucket");
+		GetNode<Sprite2D>("%Lid").Visible = false;
+		var catchArea = _bucket.GetNode<Area2D>("CatchArea");
+		catchArea.BodyEntered += OnBucketCatch;
+		var loseArea = GetNode<Area2D>("LoseArea");
+		loseArea.BodyEntered += OnBucketMiss;
+		
+		_goober1.GravityScale = 0f;
+		_goober2.GravityScale = 0f;
+
+		_dropping = (_temp < 0.5) ? 0 : 1;
+
+		if (_dropping == 0)
+		{
+			_hand.Position = new Vector2(367,149);
+		}
+		else
+		{
+			_hand.Position = new Vector2(3483,149);
+		}
 	}
 
 	protected override void Start(){
