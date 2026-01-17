@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dam081bip3hwt"]
+[gd_scene load_steps=7 format=3 uid="uid://dam081bip3hwt"]
 
 [ext_resource type="Script" uid="uid://cnoyukngw3l7r" path="res://assets/GameManager.cs" id="1_iirjy"]
 [ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="2_uv11x"]
 [ext_resource type="Resource" uid="uid://dd5l506p4hykp" path="res://assets/resources/ExampleGameInfo.tres" id="3_uikel"]
+[ext_resource type="Resource" uid="uid://8ltpc4qtp17n" path="res://assets/resources/GlassGameInfo.tres" id="4_uikel"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uv11x"]
 size = Vector2(1920, 2160)
@@ -13,7 +14,8 @@ size = Vector2(1920, 2160)
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_iirjy")
 _debugMessages = true
-_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel")])
+_debugLoadGame = "GlassGame"
+_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel"), ExtResource("4_uikel")])
 
 [node name="DoorL" type="Sprite2D" parent="."]
 unique_name_in_owner = true

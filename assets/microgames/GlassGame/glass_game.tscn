@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://100p1fwr5ntq"]
+
+[ext_resource type="Texture2D" uid="uid://cfn1185uk541" path="res://assets/microgames/GlassGame/transGlass.png" id="1_nl2pw"]
+[ext_resource type="Texture2D" uid="uid://ckqbohek7vmmb" path="res://assets/microgames/GlassGame/alien1.png" id="1_s6wqi"]
+[ext_resource type="Texture2D" uid="uid://opftchlmda5h" path="res://assets/microgames/GlassGame/alienmew.png" id="2_yrkp2"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_63sfa"]
+size = Vector2(100, 100)
+
+[node name="GlassGame" type="Node2D"]
+scale = Vector2(38.2, 23.239998)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.10575647, 0.32619846, 0.25643125, 1)
+position = Vector2(50.10471, 46.944927)
+scale = Vector2(-1.1217542, 1.0810788)
+texture = SubResource("PlaceholderTexture2D_63sfa")
+
+[node name="Alien1" type="Sprite2D" parent="."]
+position = Vector2(49.109943, 48.49398)
+scale = Vector2(0.050831195, 0.08215038)
+texture = ExtResource("1_s6wqi")
+
+[node name="Alienmew" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(50.261784, 50.043034)
+scale = Vector2(0.059439294, 0.09527873)
+texture = ExtResource("2_yrkp2")
+
+[node name="Sprite2D" type="Sprite2D" parent="Alienmew"]
+modulate = Color(0, 0, 0, 1)
+show_behind_parent = true
+position = Vector2(-11.252869, -12.86438)
+scale = Vector2(20.803577, 12.048787)
+texture = SubResource("PlaceholderTexture2D_63sfa")
+
+[node name="TransGlass" type="Sprite2D" parent="."]
+position = Vector2(50.2356, 46.600693)
+scale = Vector2(0.052355975, 0.08605836)
+texture = ExtResource("1_nl2pw")
