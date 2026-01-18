@@ -1,0 +1,66 @@
+[gd_scene load_steps=9 format=3 uid="uid://bfbp5xn7rtsdo"]
+
+[ext_resource type="Script" uid="uid://c1ljjvud57b3w" path="res://assets/microgames/CageGame/Scripts/CageGame.cs" id="1_s5boc"]
+[ext_resource type="Texture2D" uid="uid://dt6rtafv8qwb8" path="res://assets/microgames/CageGame/Sprites/the baby.png" id="2_u8xfm"]
+[ext_resource type="Texture2D" uid="uid://ca1nbwsjoxari" path="res://assets/microgames/CageGame/Sprites/HIS CAGE.png" id="3_62gwh"]
+[ext_resource type="PackedScene" uid="uid://d0a00hfk3qc3o" path="res://assets/microgames/CageGame/Prefabs/obstacle_prefab.tscn" id="4_62gwh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lyb6h"]
+size = Vector2(64, 107)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u8xfm"]
+size = Vector2(1614, 990)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_u8xfm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eisfl"]
+size = Vector2(188, 163)
+
+[node name="CageGame" type="Node2D"]
+script = ExtResource("1_s5boc")
+_speed = 1000.0
+
+[node name="AlienSprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(3484, 371)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_u8xfm")
+
+[node name="Alien2D" type="Area2D" parent="AlienSprite" groups=["Alien"]]
+scale = Vector2(2, 2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AlienSprite/Alien2D"]
+position = Vector2(-3, 26.5)
+shape = SubResource("RectangleShape2D_lyb6h")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(579, 1849)
+scale = Vector2(0.5, 0.5)
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(-303, 11)
+shape = SubResource("RectangleShape2D_u8xfm")
+
+[node name="PlayerSprite" type="Sprite2D" parent="CharacterBody2D"]
+unique_name_in_owner = true
+texture = ExtResource("3_62gwh")
+
+[node name="HazmatSprite" type="Sprite2D" parent="CharacterBody2D/PlayerSprite"]
+position = Vector2(-816, 6)
+scale = Vector2(500, 500)
+texture = SubResource("PlaceholderTexture2D_u8xfm")
+
+[node name="Player2D" type="Area2D" parent="CharacterBody2D/PlayerSprite" groups=["Player"]]
+scale = Vector2(2, 2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D/PlayerSprite/Player2D"]
+position = Vector2(6, 18.5)
+shape = SubResource("RectangleShape2D_eisfl")
+
+[node name="ObstacleSprite" parent="." instance=ExtResource("4_62gwh")]
+position = Vector2(865, 512)
+
+[connection signal="area_entered" from="CharacterBody2D/PlayerSprite/Player2D" to="." method="_on_player_2d_area_entered"]
