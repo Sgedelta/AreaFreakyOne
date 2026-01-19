@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GameInfo" load_steps=3 format=3 uid="uid://fsbtspf6f0s0"]
+
+[ext_resource type="PackedScene" uid="uid://bfbp5xn7rtsdo" path="res://assets/microgames/CageGame/Scenes/CageGame.tscn" id="1_1i5vr"]
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="1_3wn5c"]
+
+[resource]
+script = ExtResource("1_3wn5c")
+GameScene = ExtResource("1_1i5vr")
+ID = "CageGame"
+DifficultyWeights = Dictionary[int, float]({
+1: 3.0
+})
+metadata/_custom_type_script = "uid://s6ubm32pcy"
