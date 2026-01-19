@@ -169,14 +169,14 @@ public partial class GameManager : Node2D
             _loadedGame = (MicroBase)newGameScene.Instantiate();
             _loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
             GetTree().Root.AddChild(_loadedGame);
+            
         }));
         GameTransition.TweenCallback(Callable.From(() =>
         {
             _loadedGame.GameEnd += OnGameEnd;
             _loadedGame.GameProgressReport += HandleProgress;
-            
 
-            EmitSignal(SignalName.InitializeGame);
+            EmitSignal(SignalName.InitializeGame, CurrentDifficulty);
 
         }));
 
@@ -262,7 +262,61 @@ public partial class GameManager : Node2D
             _gameWeightDict.Add(info.ID, foundWeight);
         }
     }
-   
 
+    /// <summary>
+    /// A helper function that takes a godot dictionary and an input key for it and returns an interpolated value for that potential key
+    ///   below the data range - return the lowest value
+    ///   above the data range - return the highest value
+    ///   on an exact number - return the value associated with that
+    ///   or between two numbers in the range - return a lerp between those two values
+    /// </summary>
+    /// <returns></returns>
+    public float InterpolateDictionary(Godot.Collections.Dictionary<int, float> dict, int inputKey)
+    {
+        int[] keys = dict.Keys.ToArray(); // *should* already be sorted
+        float[] values = dict.Values.ToArray();
+
+        if (keys.Length == 0 || values.Length == 0)
+        {
+            throw new ArgumentException("Input Dictionary has no entries!");
+        }
+
+        //loop over every entry to figure out where we should be 
+        for(int i = 0; i < keys.Length; i++)
+        {
+
+            //we landed on it
+            if (keys[i] == inputKey)
+            {
+                return values[i];
+            }
+            //if the key we're on in the loop is greater than the input, we passed it and need to return something
+            else if (keys[i] > inputKey)
+            {
+                //if this is the first item, the entire dictionary starts higher than our first input. return the lowest value
+                if(i == 0)
+                {
+                    return values[0];
+                }
+                //otherwise lerp between this one and the one before it.
+                else
+                {
+                    return Mathf.Lerp(values[i-1], values[i], ((float)(inputKey - keys[i-1]) / (float)(keys[i] - keys[i-1])));
+                }
+
+            }
+            //if the key we're on is less, keep going unless this is the last one
+            //if it is the last one, our key is higher than all of the entries, so return the last entry
+            else if (keys[i] < inputKey && i == keys.Length - 1)
+            {
+                return values[i];
+            }
+
+
+        }
+
+        //this should never be run, but codepaths must return a value...
+        throw new Exception("InterpolateDictionary failed!");
+    }
 
 }
