@@ -8,8 +8,6 @@ script = ExtResource("1_hfh4i")
 GameScene = ExtResource("1_m6fxv")
 ID = "example_game"
 DifficultyWeights = Dictionary[int, float]({
-0: 1.0,
-2: 10.0,
-3: 0.0
+0: 0.0
 })
 metadata/_custom_type_script = "uid://s6ubm32pcy"
