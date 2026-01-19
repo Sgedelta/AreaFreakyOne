@@ -23,7 +23,7 @@ public partial class CageGame : MicroBase
 
 	private Sprite2D _alien;
 
-	[Export] private int _difficulty = 0;
+	[Export] private int _difficulty = 2; // Hook up difficulty properly - do NOT hardcode set this!
 	private PackedScene _obstacle;
 
 	public CageGame()
@@ -57,29 +57,24 @@ public partial class CageGame : MicroBase
 			return;
 		}
 
-		Node nodeObstacle = _obstacle.Instantiate();
-
 		GD.Print(_difficulty);
-
-		Godot.Collections.Array obstacles = [nodeObstacle];
 
 		switch (_difficulty)
 		{
-			case 1:
-				if (nodeObstacle is Node2D node2D)
-				{
-					node2D.GlobalPosition = new Vector2(1962.0f, 951.0f);
-				}
-				AddChild(nodeObstacle);
+			case 0:
+                SpawnObstacles(new Vector2(1962.0f, 951.0f));
 				break;
-			case 2:
-				
-				break;
-			case 3:
+            case 1:
+                SpawnObstacles(new Vector2(1962.0f, 951.0f));
+				SpawnObstacles(new Vector2(1093.0f, 548.0f));
+                break;
 			default:
-				
-				break;
+                SpawnObstacles(new Vector2(1962.0f, 951.0f));
+                SpawnObstacles(new Vector2(1093.0f, 548.0f));
+                SpawnObstacles(new Vector2(2836.0f, 1568.0f));
+                break;
 		}
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -207,8 +202,10 @@ public partial class CageGame : MicroBase
 		{	
 			GD.Print("Alien caught - You Won!");
 
-			_gameTimer = null; // is this the proper way to stop the timer?
-			_gameWon = MicroState.WON;
+            _gameWon = MicroState.WON;
+            _gameStarted = false;
+            _gameTimer.QueueFree();
+            End();
 		}
 	}
 
@@ -235,4 +232,15 @@ public partial class CageGame : MicroBase
 	{
 		_difficulty = difficulty;
 	}
+
+	private void SpawnObstacles(Vector2 pos)
+	{
+        Node nodeObstacle = _obstacle.Instantiate();
+
+        if (nodeObstacle is Node2D node2D)
+        {
+            node2D.GlobalPosition = pos;
+        }
+        AddChild(nodeObstacle);
+    }
 }
