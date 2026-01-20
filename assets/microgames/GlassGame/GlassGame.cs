@@ -20,6 +20,8 @@ public partial class GlassGame : MicroBase
     float alienTimer = 0;
     Sprite2D alienWalk;
     Sprite2D alienMew;
+    Sprite2D click;
+    float clickTimer;
 
     //ensures that vars have been set in inspector
     public GlassGame()
@@ -34,6 +36,7 @@ public partial class GlassGame : MicroBase
         _gm.StartGame += Start;
         _gm.InitializeGame += Init;
 
+        click = GetTree().Root.GetNode<Node2D>("GlassGame").GetNode<Sprite2D>("Click");
         alienWalk = GetTree().Root.GetNode<Node2D>("GlassGame").GetNode<Sprite2D>("Alien1");
         alienMew = GetTree().Root.GetNode<Node2D>("GlassGame").GetNode<Sprite2D>("Alienmew");
 
@@ -71,6 +74,13 @@ public partial class GlassGame : MicroBase
                 End();
             }
         }
+        if (clickTimer > 0) { 
+            clickTimer -= dt; 
+            if (clickTimer <= 0)
+            {
+                click.Visible = false;
+            }
+        }
 
         CalculateProgress();
     }
@@ -90,13 +100,22 @@ public partial class GlassGame : MicroBase
         {
             return;
         }
+        /*if (@event is InputEventJoypadButton)
+        {
+            GD.Print("Click: " + @event.IsActionJustPressed("click"));
+        }*/
 
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+            if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
         {
             if (mouseEvent.ButtonIndex == MouseButton.Left) 
             {
                 numberTaps -= 1;
                 Console.WriteLine("increment to " +  numberTaps);
+
+                click.Position = GetLocalMousePosition();
+                click.Visible = true;
+                clickTimer = 0.2f;
+
                 if (numberTaps < 0)
                 {
                     alienTime = true;
@@ -104,6 +123,7 @@ public partial class GlassGame : MicroBase
                     alienWalk.Visible = true;
                 }
             }
+
         }
     }
 
