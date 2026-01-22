@@ -11,10 +11,12 @@ size = Vector2(1920, 2160)
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uikel"]
 size = Vector2(1920, 2160)
 
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xmae1"]
+size = Vector2(3840, 50)
+
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_iirjy")
-_debugMessages = true
-_gameInfos = Array[ExtResource("2_uikel")]([ExtResource("3_uikel"), ExtResource("3_uv11x")])
+_gameInfos = Array[ExtResource("2_uv11x")]([ExtResource("3_uikel")])
 
 [node name="DoorL" type="Sprite2D" parent="."]
 unique_name_in_owner = true
@@ -27,3 +29,10 @@ unique_name_in_owner = true
 z_index = 55
 position = Vector2(4800, 1080)
 texture = SubResource("PlaceholderTexture2D_uikel")
+
+[node name="ChudProgressBar" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0, 1, 1, 1)
+position = Vector2(0, 2144)
+texture = SubResource("PlaceholderTexture2D_xmae1")
+offset = Vector2(1920, 0)

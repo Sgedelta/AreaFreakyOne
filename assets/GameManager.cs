@@ -12,17 +12,20 @@ public partial class GameManager : Node2D
 
 	//=========VARIABLES=========
 
-	//==internal vars==
-	RandomNumberGenerator rng;
-	MicroBase loadedGame;
+    //==internal vars==
+    private RandomNumberGenerator _rng;
+    private MicroBase _loadedGame;
 
-	//Holds all the details about various debug functions
-	[ExportGroup("Debug")]
-	//a global toggle for generalized debug messages - check this when debugging things beyond a temporary check that will be deleted!
-	// potential todo - change to bitmask/similar to allow for multiple toggles without a billion variables? such as toggling progress reports or general messages or load messages, etc
-	// or just a resource? idk
-	[Export] private bool _debugMessages = false;
-	public bool DEBUG_MESSAGES { get { return _debugMessages; } }
+
+    //==Editor Exposed Vars==
+
+    //Holds all the details about various debug functions
+    [ExportGroup("Debug")]
+    //a global toggle for generalized debug messages - check this when debugging things beyond a temporary check that will be deleted!
+    // potential todo - change to bitmask/similar to allow for multiple toggles without a billion variables? such as toggling progress reports or general messages or load messages, etc
+    // or just a resource? idk
+    [Export] private bool _debugMessages = false;
+    public bool DEBUG_MESSAGES { get { return _debugMessages; } }
 
 	//If left empty, will force the given game to be loaded instead of a random game
 	[Export] private string _debugLoadGame = "";
@@ -43,8 +46,16 @@ public partial class GameManager : Node2D
 
 	public int CurrentDifficulty = 0;
 
+    //==Helper Vars==
+    private bool _isMnK = true;
+    public bool IsMnK { get { return _isMnK; }}
 
-	//=========SIGNALS=========
+    //a controller deadzone measure. A bit of a cop out, but this is is simple version - if we wanted deadzones for specific sticks or deadzones for even directions on sticks, this will need to be updated
+    // used in GM Input() and GM Ready. Will need to be updated when we allow for deadzones being changed.
+    private float _controllerDeadzone = .2f;
+
+
+    //=========SIGNALS=========
 
 	/// <summary>
 	/// Sent when the Microgame should start
@@ -66,11 +77,11 @@ public partial class GameManager : Node2D
 
 	}
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		CurrentLives = _startingLives;
-		rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        CurrentLives = _startingLives;
+        _rng = new RandomNumberGenerator(); //if we want seeds, this is where they'd go
 
 		//construct packedScene dict and initial Weights
 		foreach (GameInfo info in _gameInfos)
@@ -85,9 +96,10 @@ public partial class GameManager : Node2D
 			GD.Print($"[GM] {_gameWeightDict}");
 		}
 
-		
-		
-	}
+        _controllerDeadzone = InputMap.ActionGetDeadzone("Up"); //using up as a proxy for all deadzones. Update if more we allow for more specific things
+        
+        
+    }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -95,7 +107,26 @@ public partial class GameManager : Node2D
 
 	}
 
-	//=========METHODS=========
+    // check for mnk or controller input
+    //  note: should be a way to check for specific controllers too...
+    public override void _Input(InputEvent @event)
+    {
+        if(@event is InputEventKey or InputEventMouse)
+        {
+            _isMnK = true;
+        }
+        else if(@event is InputEventJoypadButton)
+        {
+            _isMnK = false;
+        }
+        //buttons don't need deadzones, motions do
+        else if(@event is InputEventJoypadMotion motion && motion.AxisValue > _controllerDeadzone)
+        {
+            _isMnK = false;
+        }
+    }
+
+    //=========METHODS=========
 
 	public void OnGameEnd(int wonInput)
 	{
@@ -105,15 +136,15 @@ public partial class GameManager : Node2D
 		//hide the game
 		Tween GameTransition = GetTree().CreateTween();
 
-		//close
-		GameTransition.TweenProperty(GetNode("%DoorL"), "position:x", 960.0f, 1.0f).From(-960.0f); //values are temp
-		GameTransition.Parallel().TweenProperty(GetNode("%DoorR"), "position:x", 2880.0f, 1.0f).From(4800.0f); //values are temp
-		//unload game
-		GameTransition.TweenCallback(Callable.From(() =>
-		{
-			loadedGame?.QueueFree();
-			loadedGame = null;
-		}));
+        //close
+        GameTransition.TweenProperty(GetNode("%DoorL"), "position:x", 960.0f, 1.0f).From(-960.0f); //values are temp
+        GameTransition.Parallel().TweenProperty(GetNode("%DoorR"), "position:x", 2880.0f, 1.0f).From(4800.0f); //values are temp
+        //unload game
+        GameTransition.TweenCallback(Callable.From(() =>
+        {
+            _loadedGame?.QueueFree();
+            _loadedGame = null;
+        }));
 
 		//do whatever we need to do to transfer games
 		//TODO 
@@ -132,20 +163,20 @@ public partial class GameManager : Node2D
 		//tween to transition
 		Tween GameTransition = GetTree().CreateTween();
 
-		//load a new game and THEN hook up to it and tell it to init
-		GameTransition.TweenCallback(Callable.From(() =>
-		{
-			loadedGame = (MicroBase)newGameScene.Instantiate();
-			loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
-			GetTree().Root.AddChild(loadedGame);
-		}));
-		GameTransition.TweenCallback(Callable.From(() =>
-		{
-			loadedGame.GameEnd += OnGameEnd;
-			loadedGame.GameProgressReport += HandleProgress;
-			
+        //load a new game and THEN hook up to it and tell it to init
+        GameTransition.TweenCallback(Callable.From(() =>
+        {
+            _loadedGame = (MicroBase)newGameScene.Instantiate();
+            _loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
+            GetTree().Root.AddChild(_loadedGame);
+        }));
+        GameTransition.TweenCallback(Callable.From(() =>
+        {
+            _loadedGame.GameEnd += OnGameEnd;
+            _loadedGame.GameProgressReport += HandleProgress;
 
-			EmitSignal(SignalName.InitializeGame);
+
+            EmitSignal(SignalName.InitializeGame, CurrentDifficulty);
 
 		}));
 
@@ -160,10 +191,10 @@ public partial class GameManager : Node2D
 		}));
 	}
 
-	public void HandleProgress(float progressRatio)
-	{
-		//TODO
-	}
+    public void HandleProgress(float progressRatio)
+    {
+        GetNode<Node2D>("%ChudProgressBar").Scale = new Vector2(progressRatio, 1);
+    }
 
 	public PackedScene PickNewGame()
 	{
@@ -172,7 +203,7 @@ public partial class GameManager : Node2D
 			return _gameSceneDict[DEBUG_LOAD_GAME];
 		}
 
-		int chosenGameIndex = (int)rng.RandWeighted(_gameWeightDict.Values.ToArray());
+        int chosenGameIndex = (int)_rng.RandWeighted(_gameWeightDict.Values.ToArray());
 
 		string chosenGameID = _gameWeightDict.Keys.ToArray()[chosenGameIndex];
 		
@@ -227,11 +258,65 @@ public partial class GameManager : Node2D
 				}
 			}
 
-			//add it
-			_gameWeightDict.Add(info.ID, foundWeight);
-		}
-	}
-   
+            //add it
+            _gameWeightDict.Add(info.ID, foundWeight);
+        }
+    }
 
+    /// <summary>
+    /// A helper function that takes a godot dictionary and an input key for it and returns an interpolated value for that potential key
+    ///   below the data range - return the lowest value
+    ///   above the data range - return the highest value
+    ///   on an exact number - return the value associated with that
+    ///   or between two numbers in the range - return a lerp between those two values
+    /// </summary>
+    /// <returns></returns>
+    public float InterpolateDictionary(Godot.Collections.Dictionary<int, float> dict, int inputKey)
+    {
+        int[] keys = dict.Keys.ToArray(); // *should* already be sorted
+        float[] values = dict.Values.ToArray();
+
+        if (keys.Length == 0 || values.Length == 0)
+        {
+            throw new ArgumentException("Input Dictionary has no entries!");
+        }
+
+        //loop over every entry to figure out where we should be 
+        for (int i = 0; i < keys.Length; i++)
+        {
+
+            //we landed on it
+            if (keys[i] == inputKey)
+            {
+                return values[i];
+            }
+            //if the key we're on in the loop is greater than the input, we passed it and need to return something
+            else if (keys[i] > inputKey)
+            {
+                //if this is the first item, the entire dictionary starts higher than our first input. return the lowest value
+                if (i == 0)
+                {
+                    return values[0];
+                }
+                //otherwise lerp between this one and the one before it.
+                else
+                {
+                    return Mathf.Lerp(values[i - 1], values[i], ((float)(inputKey - keys[i - 1]) / (float)(keys[i] - keys[i - 1])));
+                }
+
+            }
+            //if the key we're on is less, keep going unless this is the last one
+            //if it is the last one, our key is higher than all of the entries, so return the last entry
+            else if (keys[i] < inputKey && i == keys.Length - 1)
+            {
+                return values[i];
+            }
+
+
+        }
+
+        //this should never be run, but codepaths must return a value...
+        throw new Exception("InterpolateDictionary failed!");
+    }
 
 }
