@@ -1,0 +1,115 @@
+[gd_scene load_steps=10 format=3 uid="uid://ccycmq4rv8ivj"]
+
+[ext_resource type="Texture2D" uid="uid://nsoralveonnm" path="res://assets/microgames/ContainerGame/bucket_bottom.png" id="1_l7yph"]
+[ext_resource type="Texture2D" uid="uid://b1p67xb41cahs" path="res://assets/microgames/ContainerGame/ContainerAlien.png" id="1_pnicd"]
+[ext_resource type="Script" uid="uid://c1hd60bcqi2ic" path="res://assets/microgames/ContainerGame/ContainerGame.cs" id="1_ttdq1"]
+[ext_resource type="Texture2D" uid="uid://b8l411iuppn3a" path="res://assets/microgames/ContainerGame/clip.png" id="2_d63gj"]
+[ext_resource type="Texture2D" uid="uid://dr8xqblyv7let" path="res://assets/microgames/ContainerGame/lid.png" id="4_jun5y"]
+[ext_resource type="Texture2D" uid="uid://rrvorvkt408l" path="res://assets/microgames/ContainerGame/bucket_hole.png" id="4_ttdq1"]
+[ext_resource type="Texture2D" uid="uid://bo5gmrb1ljj0x" path="res://assets/microgames/ContainerGame/hand.png" id="5_wccpe"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ttdq1"]
+size = Vector2(464, 213)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jun5y"]
+size = Vector2(3832.5, 20)
+
+[node name="ContainerGame" type="Node2D"]
+script = ExtResource("1_ttdq1")
+_bucketFrameDelay = 10
+_debugMessages = true
+DEBUG_AUTOSTART = true
+metadata/_edit_vertical_guides_ = [1920.0]
+
+[node name="Clothesline" type="Line2D" parent="."]
+position = Vector2(0, 102)
+points = PackedVector2Array(0, 197, 3840, 197)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Bucket" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(1920, 1890)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Bucket"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Bucket/StaticBody2D"]
+polygon = PackedVector2Array(-316, -210, -227, 180, -176, 206, 8, 242, 201, 217, 272, 166, 355, -226, 276, -217, 203, 127, 134, 190, -61, 182, -165, 171, -170, 113, -234, -204)
+
+[node name="CatchArea" type="Area2D" parent="Bucket"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bucket/CatchArea"]
+position = Vector2(22, 55.5)
+shape = SubResource("RectangleShape2D_ttdq1")
+
+[node name="BucketHole" type="Sprite2D" parent="Bucket"]
+show_behind_parent = true
+visibility_layer = 512
+texture = ExtResource("4_ttdq1")
+
+[node name="BucketSprite" type="Sprite2D" parent="Bucket"]
+z_index = 3
+texture = ExtResource("1_l7yph")
+
+[node name="Clip 1" type="Sprite2D" parent="."]
+top_level = true
+position = Vector2(381, 231)
+scale = Vector2(0.25185186, 0.25185186)
+texture = ExtResource("2_d63gj")
+
+[node name="Clip 2" type="Sprite2D" parent="."]
+top_level = true
+position = Vector2(3499, 231)
+scale = Vector2(0.25185186, 0.25185186)
+texture = ExtResource("2_d63gj")
+
+[node name="Hand" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+top_level = true
+position = Vector2(1924, 142)
+scale = Vector2(0.2943337, 0.29433367)
+texture = ExtResource("5_wccpe")
+
+[node name="Lid" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(1928, 1642)
+scale = Vector2(1.4822224, 1.2311112)
+texture = ExtResource("4_jun5y")
+
+[node name="Goober2" type="RigidBody2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(376, 476.99994)
+gravity_scale = 0.0
+
+[node name="Goober2Sprite" type="Sprite2D" parent="Goober2"]
+visibility_layer = 5
+position = Vector2(3119.9998, -60.865)
+scale = Vector2(0.225, 0.22307362)
+texture = ExtResource("1_pnicd")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Goober2"]
+position = Vector2(3124, -60.865)
+scale = Vector2(0.225, 0.22307362)
+polygon = PackedVector2Array(-314.49207, -236.47833, -268.17157, -319.36774, -255.98193, -341.30902, -287.67493, -365.6883, -277.92322, -416.88464, -229.1648, -429.07428, -216.97516, -392.50543, -207.22345, -365.6883, -134.08575, -407.133, -60.94806, -414.44672, 36.568848, -390.0675, 65.82391, -358.3745, 82.88934, -375.43994, 80.45148, -414.44672, 102.39276, -419.32257, 146.27545, -387.62958, 146.27545, -358.3745, 124.334045, -343.74695, 99.954895, -358.3745, 85.32733, -346.18488, 143.83746, -280.36096, 168.21674, -238.91626, 229.16473, -251.1059, 309.61627, -209.6612, 319.36798, -153.58893, 292.55084, -92.64087, 224.28888, -46.320313, 185.28217, -48.7583, 136.52374, 121.89636, 202.3476, 187.72034, 187.72003, 253.54419, 131.64789, 297.42688, 65.82391, 297.42688, 19.503418, 263.2959, 7.3137817, 246.23047, -165.77875, 248.66833, -195.03387, 290.11304, -248.66815, 314.4923, -321.80585, 277.92346, -346.18512, 214.53748, -333.99548, 148.7135, -302.3025, 119.458496, -329.11963, 51.196533, -338.87134, 9.751953, -346.18512, -41.444458, -397.38147, -53.634155, -421.76068, -68.2616, -436.38824, -87.765015, -465.64334, -134.08557, -463.2054, -190.15778, -426.63654, -236.47833, -358.3747, -243.79211)
+
+[node name="Goober1" type="RigidBody2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(379, 476.99994)
+
+[node name="Goober1Sprite" type="Sprite2D" parent="Goober1"]
+show_behind_parent = true
+visibility_layer = 4
+position = Vector2(0, -60.865)
+scale = Vector2(0.225, 0.22307362)
+texture = ExtResource("1_pnicd")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Goober1"]
+position = Vector2(0, -60.865)
+scale = Vector2(0.225, 0.22307362)
+polygon = PackedVector2Array(-314.49207, -236.47833, -268.17157, -319.36774, -255.98193, -341.30902, -287.67493, -365.6883, -277.92322, -416.88464, -229.1648, -429.07428, -216.97516, -392.50543, -207.22345, -365.6883, -134.08575, -407.133, -60.94806, -414.44672, 36.568848, -390.0675, 65.82391, -358.3745, 82.88934, -375.43994, 80.45148, -414.44672, 102.39276, -419.32257, 146.27545, -387.62958, 146.27545, -358.3745, 124.334045, -343.74695, 99.954895, -358.3745, 85.32733, -346.18488, 143.83746, -280.36096, 168.21674, -238.91626, 229.16473, -251.1059, 309.61627, -209.6612, 319.36798, -153.58893, 292.55084, -92.64087, 224.28888, -46.320313, 185.28217, -48.7583, 136.52374, 121.89636, 202.3476, 187.72034, 187.72003, 253.54419, 131.64789, 297.42688, 65.82391, 297.42688, 19.503418, 263.2959, 7.3137817, 246.23047, -165.77875, 248.66833, -195.03387, 290.11304, -248.66815, 314.4923, -321.80585, 277.92346, -346.18512, 214.53748, -333.99548, 148.7135, -302.3025, 119.458496, -329.11963, 51.196533, -338.87134, 9.751953, -346.18512, -41.444458, -397.38147, -53.634155, -421.76068, -68.2616, -436.38824, -87.765015, -465.64334, -134.08557, -463.2054, -190.15778, -426.63654, -236.47833, -358.3747, -243.79211)
+
+[node name="LoseArea" type="Area2D" parent="."]
+position = Vector2(167, 2093)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LoseArea"]
+position = Vector2(1757, 103)
+shape = SubResource("RectangleShape2D_jun5y")
