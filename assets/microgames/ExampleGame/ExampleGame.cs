@@ -178,7 +178,6 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 
 	protected override void Init(int difficulty)
 	{
-
 		//grab data from array
 		int minLevel = (int)_shakeTargets[0];
 		int maxLevel = (int)_shakeTargets[2];
@@ -194,6 +193,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 
 	protected override void Start()
 	{
+
         _gameTimer = new Timer();
         _gameTimer.WaitTime = _gameTime;
 		_gameTimer.OneShot = true;

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GameInfo" load_steps=3 format=3 uid="uid://djbgaepaquc4m"]
+
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="1_ayuhi"]
+[ext_resource type="PackedScene" uid="uid://b5otaga536y8a" path="res://assets/microgames/BogosBintedGame/bogosbinted_game.tscn" id="1_hd3pt"]
+
+[resource]
+script = ExtResource("1_ayuhi")
+GameScene = ExtResource("1_hd3pt")
+ID = "BogosBinted"
+DifficultyWeights = Dictionary[int, float]({
+0: 1.0
+})
+metadata/_custom_type_script = "uid://s6ubm32pcy"

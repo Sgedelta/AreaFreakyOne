@@ -169,6 +169,7 @@ public partial class GameManager : Node2D
             _loadedGame = (MicroBase)newGameScene.Instantiate();
             _loadedGame.DEBUG_AUTOSTART = false; //overwrite to prevent multistarts
             GetTree().Root.AddChild(_loadedGame);
+            
         }));
         GameTransition.TweenCallback(Callable.From(() =>
         {
