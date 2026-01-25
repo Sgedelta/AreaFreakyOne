@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameInfo" load_steps=3 format=3 uid="uid://8ltpc4qtp17n"]
+
+[ext_resource type="PackedScene" uid="uid://100p1fwr5ntq" path="res://assets/microgames/GlassGame/glass_game.tscn" id="1_1rtb4"]
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="1_2op3y"]
+
+[resource]
+script = ExtResource("1_2op3y")
+GameScene = ExtResource("1_1rtb4")
+ID = "GlassGame"
+metadata/_custom_type_script = "uid://s6ubm32pcy"
