@@ -176,6 +176,7 @@ public partial class GameManager : Node2D
             _loadedGame.GameEnd += OnGameEnd;
             _loadedGame.GameProgressReport += HandleProgress;
 
+
             EmitSignal(SignalName.InitializeGame, CurrentDifficulty);
 
         }));
@@ -282,7 +283,7 @@ public partial class GameManager : Node2D
         }
 
         //loop over every entry to figure out where we should be 
-        for(int i = 0; i < keys.Length; i++)
+        for (int i = 0; i < keys.Length; i++)
         {
 
             //we landed on it
@@ -294,14 +295,14 @@ public partial class GameManager : Node2D
             else if (keys[i] > inputKey)
             {
                 //if this is the first item, the entire dictionary starts higher than our first input. return the lowest value
-                if(i == 0)
+                if (i == 0)
                 {
                     return values[0];
                 }
                 //otherwise lerp between this one and the one before it.
                 else
                 {
-                    return Mathf.Lerp(values[i-1], values[i], ((float)(inputKey - keys[i-1]) / (float)(keys[i] - keys[i-1])));
+                    return Mathf.Lerp(values[i - 1], values[i], ((float)(inputKey - keys[i - 1]) / (float)(keys[i] - keys[i - 1])));
                 }
 
             }
