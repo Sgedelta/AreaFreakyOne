@@ -37,7 +37,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 	public override void _Ready()
 	{
 		_gm = GetTree().Root.GetNode<GameManager>("GameManager");
-		//make SURE to unsubscribe before calling end!
+		// End unsubscribes these, but anything else you subscribe to these signals NEEDS to be unsubscribed
 		_gm.StartGame += Start;
 		_gm.InitializeGame += Init;
 
@@ -72,6 +72,16 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			_player.Modulate = Color.Color8(255, 0, 0, 255);
 		}
 
+		//a dumb test to show MnK vs Controller...
+		if (!_gm.IsMnK)
+		{
+			_player.Scale = new Vector2(.5f, 2);
+		}
+		else
+		{
+			_player.Scale = Vector2.One;
+		}
+		
 		//make sure to report progress
 		CalculateProgress();
 	}
@@ -106,7 +116,7 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 		*/
 
 		//process button input like this
-		if (@event is InputEventJoypadMotion)
+		if (_gm.DEBUG_MESSAGES && @event is InputEventJoypadMotion)
 		{
 			GD.Print("Up: " + @event.GetActionStrength("Up"));
 			GD.Print("Down: " + @event.GetActionStrength("Down"));
@@ -145,14 +155,23 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 		// so we can treat them as buttons. 
 		if(@event is InputEventMouseMotion eventMouse)
 		{
-			//could do any number of things here, but rn we are just going to "track velocities". simple-nothings for an example
-			float movementVel = eventMouse.Velocity.Length();
+			//could do any number of things here, but rn we are just going to "track velocities". simple-nothings for an example. In fact, I recommend you do ANYTHING ELSE. but that's fine for an example
+			float movementVel = eventMouse.ScreenVelocity.Length();
 			if (movementVel > _shakeThreshold) {
 				_recordedShakeVels += movementVel - _shakeThreshold;
 				//note; i'm not positive this won't be an issue with frame rate?  but it *should* be okay...
 				//there is probably a better way to do this, where you store the last frame rate and add it to a "time being shaken" if the velocity is high enough?
 				//this is an example game, I'm not that worried.
 			}
+		}
+
+		//process controller as mouse like this:
+		if(!_gm.IsMnK)
+		{
+			//Note: this is bad and wrong for this game, but the processing is correct. You should NOT use this for games with both WASD and Mouse controls in MnK. Talk to Sam for more details :>
+			Vector2 controllerAsMouse = new Vector2(@event.GetActionStrength("Up") - @event.GetActionStrength("Down"), @event.GetActionStrength("Left") - @event.GetActionStrength("Right"));
+			float movementVel = controllerAsMouse.Length() * 100;
+			_recordedShakeVels += movementVel;
 		}
 
 	}
@@ -187,10 +206,6 @@ public partial class ExampleGame : MicroBase //Inherit from MicroBase!
 			}
 			_gameStarted = false; //honestly, I would maybe move this to tracking the _gameWon, and preventing all input if _gameWon is not ONGOING, but I want to get the example done lol
 			_gameTimer.QueueFree();
-            //_gameTimer.Timeout.
-
-            _gm.StartGame -= Start;
-            _gm.InitializeGame -= Init;
 
             End(); 
 			
