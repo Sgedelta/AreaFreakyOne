@@ -14,12 +14,11 @@ size = Vector2(996.5, 2162.5)
 
 [node name="DefendGame" type="Node2D" node_paths=PackedStringArray("_defender", "_alien")]
 script = ExtResource("1_7dra4")
-_gameTime = 500.0
+_gameTime = 2.0
 _defender = NodePath("Defender")
 _alien = NodePath("Alien")
-_shootTime = 10000.0
+_shootTime = 5.0
 _fireballReference = ExtResource("2_8q8ij")
-_fireballSpeed = 50
 DEBUG_AUTOSTART = true
 
 [node name="Defender" type="Area2D" parent="."]
