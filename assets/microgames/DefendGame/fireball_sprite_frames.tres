@@ -1,0 +1,18 @@
+[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://cvaxj874b82tp"]
+
+[ext_resource type="Texture2D" uid="uid://equ4cylyc8wx" path="res://assets/microgames/DefendGame/fireball1.png" id="1_4unk1"]
+[ext_resource type="Texture2D" uid="uid://dq06yuwoxv7r4" path="res://assets/microgames/DefendGame/fireball2.png" id="2_qmset"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_4unk1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_qmset")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

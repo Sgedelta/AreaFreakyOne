@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GameInfo" load_steps=3 format=3 uid="uid://8kqypd2u8ydp"]
+
+[ext_resource type="PackedScene" uid="uid://cu4hcfhn1eyit" path="res://assets/microgames/DefendGame/defend_game.tscn" id="1_8jom6"]
+[ext_resource type="Script" uid="uid://s6ubm32pcy" path="res://assets/resources/GameInfo.cs" id="1_phrme"]
+
+[resource]
+script = ExtResource("1_phrme")
+GameScene = ExtResource("1_8jom6")
+ID = "defend_game"
+DifficultyWeights = Dictionary[int, float]({
+0: 1.0,
+1: 3.0
+})
+metadata/_custom_type_script = "uid://s6ubm32pcy"
